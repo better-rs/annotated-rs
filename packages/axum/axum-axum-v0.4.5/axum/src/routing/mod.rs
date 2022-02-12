@@ -48,10 +48,13 @@ pub use self::method_routing::{
     trace_service, MethodRouter,
 };
 
+////////////////////////////////////////////////////////////////////////
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 struct RouteId(u32);
 
 impl RouteId {
+    //
     fn next() -> Self {
         use std::sync::atomic::{AtomicU32, Ordering};
         // `AtomicU64` isn't supported on all platforms
@@ -63,6 +66,8 @@ impl RouteId {
         Self(id)
     }
 }
+
+////////////////////////////////////////////////////////////////////////
 
 // TODO X: 路由模块
 /// The router type for composing handlers and services.
@@ -114,6 +119,14 @@ where
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////
+
+    /*
+        todo x: route 路由注册
+            - 参数:
+                - path: API 端点
+
+    */
     #[doc = include_str!("../docs/routing/route.md")]
     pub fn route<T>(mut self, path: &str, service: T) -> Self
     where
@@ -124,6 +137,7 @@ where
             panic!("Invalid route: empty path");
         }
 
+        //
         let service = match try_downcast::<Router<B>, _>(service) {
             Ok(_) => {
                 panic!("Invalid route: `Router::route` cannot be used with `Router`s. Use `Router::nest` instead")
@@ -131,10 +145,15 @@ where
             Err(svc) => svc,
         };
 
+        //----------------------------------------------//
+
+        // todo x:
         let id = RouteId::next();
 
         let service = match try_downcast::<MethodRouter<B, Infallible>, _>(service) {
             Ok(method_router) => {
+                //
+                //
                 if let Some((route_id, Endpoint::MethodRouter(prev_method_router))) = self
                     .node
                     .path_to_route_id
@@ -145,6 +164,10 @@ where
                     // merge them. This makes `.route("/", get(_)).route("/", post(_))` work
                     let service =
                         Endpoint::MethodRouter(prev_method_router.clone().merge(method_router));
+
+                    //
+                    // todo x: 插入路由
+                    //
                     self.routes.insert(route_id, service);
                     return self;
                 } else {
@@ -154,10 +177,18 @@ where
             Err(service) => Endpoint::Route(Route::new(service)),
         };
 
+        //----------------------------------------------//
+
+        //
+        // todo x:
+        //
         if let Err(err) = self.node.insert(path, id) {
             self.panic_on_matchit_error(err);
         }
 
+        //
+        // todo x: 插入路由
+        //
         self.routes.insert(id, service);
 
         self
@@ -582,15 +613,20 @@ pub(crate) struct InvalidUtf8InPathParam {
     pub(crate) key: ByteStr,
 }
 
+////////////////////////////////////////////////////////////////////////
+
 /// Wrapper around `matchit::Node` that supports merging two `Node`s.
 #[derive(Clone, Default)]
 struct Node {
     inner: matchit::Node<RouteId>,
-    route_id_to_path: HashMap<RouteId, Arc<str>>,
-    path_to_route_id: HashMap<Arc<str>, RouteId>,
+    route_id_to_path: HashMap<RouteId, Arc<str>>, // todo x:
+    path_to_route_id: HashMap<Arc<str>, RouteId>, // todo x:
 }
 
 impl Node {
+    //
+    // todo x:
+    //
     fn insert(
         &mut self,
         path: impl Into<String>,
@@ -600,7 +636,12 @@ impl Node {
 
         self.inner.insert(&path, val)?;
 
+        //
+        //  todo x: 数据类型 Arc<>
+        //      - 注意
         let shared_path: Arc<str> = path.into();
+
+        // todo x: v.clone()
         self.route_id_to_path.insert(val, shared_path.clone());
         self.path_to_route_id.insert(shared_path, val);
 

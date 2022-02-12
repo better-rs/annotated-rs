@@ -25,6 +25,8 @@ async fn main() {
 
     println!("listening on {}", addr);
 
+    //----------------------------------------------//
+
     // todo x: bind + serve 启动 http server
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
@@ -33,6 +35,7 @@ async fn main() {
 }
 
 // todo x: 具体 API 相应
+//  - 返回值类型: & 'static 标记
 async fn handler() -> Html<&'static str> {
     // 打印一个提示:
     println!("Hello, World");

@@ -85,6 +85,11 @@ macro_rules! top_level_service_fn {
     };
 }
 
+////////////////////////////////////////////////////////////////////////
+
+//
+// TODO X: 宏定义
+//
 macro_rules! top_level_handler_fn {
     (
         $name:ident, GET
@@ -117,6 +122,8 @@ macro_rules! top_level_handler_fn {
         );
     };
 
+    //----------------------------------------------//
+
     (
         $name:ident, $method:ident
     ) => {
@@ -128,6 +135,8 @@ macro_rules! top_level_handler_fn {
             $method
         );
     };
+
+    //----------------------------------------------//
 
     (
         $(#[$m:meta])+
@@ -144,6 +153,8 @@ macro_rules! top_level_handler_fn {
         }
     };
 }
+
+////////////////////////////////////////////////////////////////////////
 
 macro_rules! chained_service_fn {
     (
@@ -390,6 +401,10 @@ where
 }
 
 top_level_handler_fn!(delete, DELETE);
+
+//
+// todo x: HTTP GET
+//
 top_level_handler_fn!(get, GET);
 top_level_handler_fn!(head, HEAD);
 top_level_handler_fn!(options, OPTIONS);
