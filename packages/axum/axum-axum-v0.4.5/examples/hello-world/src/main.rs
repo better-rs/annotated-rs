@@ -28,6 +28,7 @@ async fn main() {
     //----------------------------------------------//
 
     // todo x: bind + serve 启动 http server
+    //      - app.into_make_service()
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
