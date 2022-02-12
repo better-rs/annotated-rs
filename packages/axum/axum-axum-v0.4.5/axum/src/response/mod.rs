@@ -18,6 +18,11 @@ pub use axum_core::response::{Headers, IntoResponse, Response};
 #[doc(inline)]
 pub use self::{redirect::Redirect, sse::Sse};
 
+/*
+ todo x:
+    - HTML
+
+*/
 /// An HTML response.
 ///
 /// Will automatically get `Content-Type: text/html`.
@@ -29,11 +34,16 @@ where
     T: Into<Full<Bytes>>,
 {
     fn into_response(self) -> Response {
+        //
         let mut res = Response::new(boxed(self.0.into()));
+
+        // TODO X: header
         res.headers_mut().insert(
             header::CONTENT_TYPE,
             HeaderValue::from_static(mime::TEXT_HTML_UTF_8.as_ref()),
         );
+
+        //
         res
     }
 }

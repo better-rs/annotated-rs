@@ -14,8 +14,7 @@
 
 - `jump in`标志, 此处可以跳转到 web 框架, 会继续注解
 
-
-## 版本说明: 
+## 版本说明:
 
 - [axum-axum-v0.4.5](./axum-axum-v0.4.5)
     - https://github.com/tokio-rs/axum/releases/tag/axum-v0.4.5
@@ -29,4 +28,8 @@
 
 - [examples](./axum-axum-v0.4.5/examples)
     - [hello-world](./axum-axum-v0.4.5/examples/hello-world)
+        - 最简单示例
+    - [cors](./axum-axum-v0.4.5/examples/cors)
+        - 多线程示例
+
 

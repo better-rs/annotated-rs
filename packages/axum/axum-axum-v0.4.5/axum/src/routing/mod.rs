@@ -305,6 +305,9 @@ where
         self
     }
 
+    ////////////////////////////////////////////////////////////////////////
+
+    // todo x:
     #[doc = include_str!("../docs/routing/layer.md")]
     pub fn layer<L, NewReqBody, NewResBody>(self, layer: L) -> Router<NewReqBody>
     where
@@ -345,6 +348,8 @@ where
             nested_at_root: self.nested_at_root,
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////
 
     #[doc = include_str!("../docs/routing/route_layer.md")]
     pub fn route_layer<L, NewResBody>(self, layer: L) -> Self
