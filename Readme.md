@@ -25,6 +25,23 @@
 - https://github.com/solana-labs/solana
     - 区块链
 
+## 阅读环境:
+
+- 搭建 rust 开发环境
+
+### 阅读 axum:
+
+> 安装依赖包:
+
+- 依赖 go-task 工具(替代 Makefile)
+
+```ruby 
+
+
+task install 
+
+```
+
 ## ref:
 
 - https://fancy.rs/
