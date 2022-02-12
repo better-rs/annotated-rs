@@ -59,6 +59,24 @@ task install
 
 ```
 
+## 默认注解规则:
+
+> `TODO X: XXX` 标志:
+
+- 所有新增注解, 注释前缀为如下2种格式:
+- 区分原 repo 注释, 以及方便醒目查看
+
+```ruby 
+
+// TODO X: xxx
+// todo x: xxx
+
+```
+
+> `jump in` 标志:
+
+- 此处基于 IDE, 可以跳转上下文, 会继续注解
+
 ## ref:
 
 - https://fancy.rs/
