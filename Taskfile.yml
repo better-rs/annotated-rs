@@ -45,7 +45,7 @@ tasks:
 
   push:
     cmds:
-      - git push origin master --tags
+      - git push origin main --tags
 
   ############################################################################
 
