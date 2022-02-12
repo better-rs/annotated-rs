@@ -22,5 +22,6 @@ async fn main() {
 }
 
 async fn handler() -> Html<&'static str> {
+    println!("Hello, World");
     Html("<h1>Hello, World!</h1>")
 }

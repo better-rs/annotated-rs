@@ -38,6 +38,10 @@ tasks:
     cmds:
       - cd packages/axum/axum-axum-v0.4.5/; cargo update
 
+  run:hello:
+    cmds:
+      - cd packages/axum/axum-axum-v0.4.5/examples/hello-world/; cargo run
+
 
   push:
     cmds:

@@ -25,9 +25,26 @@
 - https://github.com/solana-labs/solana
     - 区块链
 
-## 阅读环境:
+## 准备工作:
 
-- 搭建 rust 开发环境
+### 1. 搭建阅读环境:
+
+> 安装 rust 开发环境
+
+- 略
+
+> 配置源码阅读工具: Clion
+
+- https://github.com/better-rs/.github/discussions/8
+- 更好的代码跳转
+- 默认单个目标项目内, 是无法自动识别+跳转的
+
+> 以 axum 为例:
+
+- IDE 打开: `axum-axum-v0.4.5` 文件夹, 找到 `Cargo.toml` 右键,
+- 需要手动找到工程的根目录, attach `Cargo.toml` 配置
+- 之后 IDE 会自动安装依赖包
+- 首次索引会比较慢, 耐心等待
 
 ### 阅读 axum:
 
