@@ -10,10 +10,10 @@
 
 | 项目                                | 类型     | 评分     | 注解状态 | 备注                                                                               |
 |:----------------------------------|:-------|:-------|:-----|:---------------------------------------------------------------------------------|
+| [tokio](./packages/tokio)         | 异步 I/O | ⭐⭐⭐⭐⭐⭐ | Yes  | [v1.14.1](https://github.com/tokio-rs/tokio/releases/tag/tokio-1.14.1)           |
 | [axum](./packages/axum)           | web 框架 | ⭐⭐⭐⭐⭐⭐ | Yes  | [v0.4.5](https://github.com/tokio-rs/axum/releases/tag/axum-v0.4.5)              |
 | [substrate](./packages/substrate) | 区块链    | ⭐⭐⭐⭐⭐⭐ | Yes  | [v2022-02](https://github.com/paritytech/substrate/releases/tag/monthly-2022-02) |
-| [xxx](./xxx)                      | web 框架 | ⭐⭐⭐    | No   | https://github.com/actix/actix-web                                               |
-| [xxx](./xxx)                      | 异步 I/O | ⭐⭐⭐    | No   | https://github.com/tokio-rs/tokio                                                |
+| [xxx](./xxx)                      | Web 框架 | ⭐⭐⭐    | No   | https://github.com/actix/actix-web                                               |
 | [xxx](./xxx)                      | kv db  | ⭐⭐⭐    | No   | https://github.com/tikv/tikv                                                     |
 | [xxx](./xxx)                      | db ORM | ⭐⭐⭐    | No   | https://github.com/diesel-rs/diesel                                              |
 | [xxx](./xxx)                      | 区块链    | ⭐⭐⭐    | No   | https://github.com/solana-labs/solana                                            |
