@@ -17,4 +17,16 @@
 
 ## tokio reference:
 
-- 
+- https://tokio.rs/tokio/tutorial
+- https://www.driftluo.com/article/c88d853a-7ad4-47ea-b7b4-778dec039350
+- https://sf-zhou.github.io/#/Rust
+- [Tokio 源码分析「一、事件驱动 IO」](https://sf-zhou.github.io/tokio/tokio_01_mio.html)
+- [Tokio 源码分析「二、字节流 Bytes」](https://sf-zhou.github.io/tokio/tokio_02_bytes.html)
+- [Tokio 源码分析「三、运行时 Runtime」](https://sf-zhou.github.io/tokio/tokio_03_runtime.html)
+- https://zhuanlan.zhihu.com/p/72403859
+- http://blog.yanick.site/2020/09/08/rust/poller-in-tokio/
+- https://cloud.tencent.com/developer/news/581832
+- https://space.bilibili.com/24917186
+
+
+

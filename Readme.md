@@ -2,6 +2,11 @@
 
 - rust 知名项目源码分析
 
+## related:
+
+- https://github.com/better-rs/learn-rs
+    - rust 编程练习, 包含一些算法练习
+
 ## 注解项目列表:
 
 > 进展: axum / substrate 注解ing
