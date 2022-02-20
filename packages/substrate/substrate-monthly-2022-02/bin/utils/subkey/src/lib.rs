@@ -34,8 +34,12 @@ pub enum Subkey {
 	GenerateNodeKey(GenerateNodeKeyCmd),
 
 	/// Generate a random account
+	///
+	/// todo x: 生成助记词/私钥
+	///
 	Generate(GenerateCmd),
 
+	////////////////////////////////////////////////////////////////////////////////
 	/// Gets a public key and a SS58 address from the provided Secret URI
 	Inspect(InspectKeyCmd),
 

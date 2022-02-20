@@ -34,7 +34,7 @@ use clap::Parser;
 pub struct GenerateCmd {
 	/// The number of words in the phrase to generate. One of 12 (default), 15, 18, 21 and 24.
 	///
-	/// todo x: 生成助记词
+	/// todo x: 生成助记词/私钥
 	///
 	#[clap(short = 'w', long, value_name = "WORDS")]
 	words: Option<usize>,
@@ -61,7 +61,7 @@ pub struct GenerateCmd {
 impl GenerateCmd {
 	/// Run the command
 	///
-	/// todo x: 生成助记词
+	/// todo x: 生成助记词/私钥
 	///
 	pub fn run(&self) -> Result<(), Error> {
 		///

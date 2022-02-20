@@ -22,6 +22,8 @@ use clap::Parser;
 use libp2p::identity::{ed25519, PublicKey};
 use std::{fs, path::PathBuf};
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// The `inspect-node-key` command
 #[derive(Debug, Parser)]
 #[clap(
@@ -38,22 +40,29 @@ pub struct InspectNodeKeyCmd {
 	pub network_scheme: NetworkSchemeFlag,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl InspectNodeKeyCmd {
 	/// runs the command
 	pub fn run(&self) -> Result<(), Error> {
 		let mut file_content =
 			hex::decode(fs::read(&self.file)?).map_err(|_| "failed to decode secret as hex")?;
-		let secret =
-			ed25519::SecretKey::from_bytes(&mut file_content).map_err(|_| "Bad node key file")?;
+
+		///
+		/// todo x:
+		///
+		let secret = ed25519::SecretKey::from_bytes(&mut file_content).map_err(|_| "Bad node key file")?;
 
 		let keypair = ed25519::Keypair::from(secret);
 		let peer_id = PublicKey::Ed25519(keypair.public()).to_peer_id();
 
-		println!("{}", peer_id);
+		println!("peer_id: {}", peer_id);
 
 		Ok(())
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 #[cfg(test)]
 mod tests {
@@ -63,8 +72,15 @@ mod tests {
 	fn inspect_node_key() {
 		let path = tempfile::tempdir().unwrap().into_path().join("node-id").into_os_string();
 		let path = path.to_str().unwrap();
+
+		///
+		///
+		///
 		let cmd = GenerateNodeKeyCmd::parse_from(&["generate-node-key", "--file", path.clone()]);
 
+		///
+		/// todo x:
+		///
 		assert!(cmd.run().is_ok());
 
 		let cmd = InspectNodeKeyCmd::parse_from(&["inspect-node-key", "--file", path]);

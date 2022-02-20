@@ -25,6 +25,8 @@ use clap::Parser;
 use sp_core::crypto::{ExposeSecret, SecretString, SecretUri, Ss58Codec};
 use std::str::FromStr;
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// The `inspect` command
 #[derive(Debug, Parser)]
 #[clap(
@@ -76,8 +78,13 @@ pub struct InspectKeyCmd {
 	pub expect_public: Option<String>,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl InspectKeyCmd {
 	/// Run the command
+	///
+	/// todo x: 有单元测试
+	///
 	pub fn run(&self) -> Result<(), Error> {
 		let uri = utils::read_uri(self.uri.as_ref())?;
 		let password = self.keystore_params.read_password()?;
@@ -85,6 +92,9 @@ impl InspectKeyCmd {
 		if self.public {
 			with_crypto_scheme!(
 				self.crypto_scheme.scheme,
+				//
+				// todo x:
+				//
 				print_from_public(
 					&uri,
 					self.network_scheme.network.clone(),
@@ -95,12 +105,18 @@ impl InspectKeyCmd {
 			if let Some(ref expect_public) = self.expect_public {
 				with_crypto_scheme!(
 					self.crypto_scheme.scheme,
+					//
+					// todo x:
+					//
 					expect_public_from_phrase(&&expect_public, &uri, password.as_ref(),)
 				)?;
 			}
 
 			with_crypto_scheme!(
 				self.crypto_scheme.scheme,
+				//
+				// todo x:
+				//
 				print_from_uri(
 					&uri,
 					password,
@@ -113,6 +129,8 @@ impl InspectKeyCmd {
 		Ok(())
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// Checks that `expect_public` is the public key of `suri`.
 ///
@@ -153,6 +171,8 @@ fn expect_public_from_phrase<Pair: sp_core::Pair>(
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -172,6 +192,9 @@ mod tests {
 		assert!(inspect.run().is_ok());
 	}
 
+	///
+	/// todo x: 单元测试
+	///
 	#[test]
 	fn inspect_public_key() {
 		let public = "0x12e76e0ae8ce41b6516cce52b3f23a08dcb4cfeed53c6ee8f5eb9f7367341069";
