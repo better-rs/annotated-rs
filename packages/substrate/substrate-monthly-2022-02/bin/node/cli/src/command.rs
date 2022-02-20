@@ -116,12 +116,19 @@ pub fn run() -> Result<()> {
 		///
 		Some(Subcommand::Key(cmd)) => cmd.run(&cli),
 
+		///
+		/// todo x: 签名
+		///
 		Some(Subcommand::Sign(cmd)) => cmd.run(),
 
 		///
 		/// todo x:
 		///
 		Some(Subcommand::Verify(cmd)) => cmd.run(),
+
+		///
+		///
+		///
 		Some(Subcommand::Vanity(cmd)) => cmd.run(),
 		Some(Subcommand::BuildSpec(cmd)) => {
 			let runner = cli.create_runner(cmd)?;

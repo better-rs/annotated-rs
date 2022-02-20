@@ -183,6 +183,9 @@ mod tests {
 	#[cfg(feature = "bench")]
 	use test::Bencher;
 
+	///
+	/// todo x: ok to run
+	///
 	#[test]
 	fn vanity() {
 		let vanity = VanityCmd::parse_from(&["vanity", "--pattern", "j"]);
@@ -191,6 +194,10 @@ mod tests {
 
 	#[test]
 	fn test_generation_with_single_char() {
+		///
+		///
+		///
+		///
 		let seed = generate_key::<sr25519::Pair>("ab", default_ss58_version()).unwrap();
 		assert!(sr25519::Pair::from_seed_slice(&hex::decode(&seed[2..]).unwrap())
 			.unwrap()

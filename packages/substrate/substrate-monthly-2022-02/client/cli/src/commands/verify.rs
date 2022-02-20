@@ -51,18 +51,31 @@ pub struct VerifyCmd {
 	pub crypto_scheme: CryptoSchemeFlag,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl VerifyCmd {
 	/// Run the command
 	pub fn run(&self) -> error::Result<()> {
+		///
+		///
+		///
 		let message = utils::read_message(self.message.as_ref(), self.hex)?;
 		let sig_data = utils::decode_hex(&self.sig)?;
 		let uri = utils::read_uri(self.uri.as_ref())?;
 		let uri = if let Some(uri) = uri.strip_prefix("0x") { uri } else { &uri };
 
+		///
+		///
+		///
 		with_crypto_scheme!(self.crypto_scheme.scheme, verify(sig_data, message, uri))
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+///
+///
+///
 fn verify<Pair>(sig_data: Vec<u8>, message: Vec<u8>, uri: &str) -> error::Result<()>
 where
 	Pair: sp_core::Pair,
@@ -78,10 +91,13 @@ where
 		Pair::Public::from_string(uri)?
 	};
 
+	///
+	/// todo x:
+	///
 	if Pair::verify(&signature, &message, &pubkey) {
 		println!("Signature verifies correctly.");
 	} else {
-		return Err(error::Error::SignatureInvalid)
+		return Err(error::Error::SignatureInvalid);
 	}
 
 	Ok(())

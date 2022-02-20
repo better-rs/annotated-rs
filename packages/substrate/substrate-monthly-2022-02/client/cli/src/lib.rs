@@ -21,6 +21,7 @@
 #![warn(missing_docs)]
 #![warn(unused_extern_crates)]
 #![warn(unused_imports)]
+#![allow(unused_doc_comments)] // TODO X: 忽略警告 [/// 注解部分]
 
 pub mod arg_enums;
 mod commands;
