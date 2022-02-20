@@ -23,6 +23,8 @@ use crate::{
 use bip39::{Language, Mnemonic, MnemonicType};
 use clap::Parser;
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// The `generate` command
 ///
 /// todo x: 创建一个随机账户
@@ -54,6 +56,8 @@ pub struct GenerateCmd {
 	pub crypto_scheme: CryptoSchemeFlag,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl GenerateCmd {
 	/// Run the command
 	///
@@ -64,6 +68,9 @@ impl GenerateCmd {
 		/// todo x: 助记词合法个数:[ 12, 15, 18, 21, 24 ]
 		///
 		let words = match self.words {
+			///
+			/// todo x: BIP39 生成助记词
+			///
 			Some(words) => MnemonicType::for_word_count(words).map_err(|_| {
 				Error::Input(
 					"Invalid number of words given for phrase: must be 12/15/18/21/24".into(),
@@ -72,17 +79,23 @@ impl GenerateCmd {
 			None => MnemonicType::Words12,
 		};
 
+		////////////////////////////////////////////////////////////////////////////////
+
 		///
 		/// todo x: 生成助记词
 		///
 		let mnemonic = Mnemonic::new(words, Language::English);
+
+		///
+		/// todo x:
+		///
 		let password = self.keystore_params.read_password()?;
 		let output = self.output_scheme.output_type.clone();
 
 		with_crypto_scheme!(
 			self.crypto_scheme.scheme,
 			//
-			// todo x:
+			// todo x: 打印生成结果
 			//
 			print_from_uri(
 				mnemonic.phrase(),
@@ -103,6 +116,7 @@ mod tests {
 
 	///
 	/// todo x: 测试生成助记词, OK
+	///		debug 打断点, 跟踪代码链路
 	///
 	#[test]
 	fn generate() {

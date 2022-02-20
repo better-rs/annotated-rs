@@ -54,6 +54,8 @@ pub fn read_uri(uri: Option<&String>) -> error::Result<String> {
 	Ok(uri)
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Try to parse given `uri` and print relevant information.
 ///
 /// 1. Try to construct the `Pair` while using `uri` as input for [`sp_core::Pair::from_phrase`].
@@ -73,10 +75,19 @@ pub fn print_from_uri<Pair>(
 	Pair::Public: Into<MultiSigner>,
 {
 	let password = password.as_ref().map(|s| s.expose_secret().as_str());
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	///
+	///
+	///
 	if let Ok((pair, seed)) = Pair::from_phrase(uri, password.clone()) {
 		let public_key = pair.public();
 		let network_override = unwrap_or_default_ss58_version(network_override);
 
+		///
+		/// todo x:
+		///
 		match output {
 			OutputType::Json => {
 				let json = json!({
@@ -87,11 +98,17 @@ pub fn print_from_uri<Pair>(
 					"accountId": format_account_id::<Pair>(public_key),
 					"ss58Address": pair.public().into().into_account().to_ss58check_with_version(network_override),
 				});
+
+				///
 				println!(
 					"{}",
 					serde_json::to_string_pretty(&json).expect("Json pretty print failed")
 				);
 			},
+
+			///
+			///
+			///
 			OutputType::Text => {
 				println!(
 					"Secret phrase:       {}\n  \
@@ -114,6 +131,9 @@ pub fn print_from_uri<Pair>(
 		let network_override = unwrap_or_default_ss58_version(network_override);
 
 		match output {
+			///
+			///
+			///
 			OutputType::Json => {
 				let json = json!({
 					"secretKeyUri": uri,
@@ -123,11 +143,17 @@ pub fn print_from_uri<Pair>(
 					"accountId": format_account_id::<Pair>(public_key),
 					"ss58Address": pair.public().into().into_account().to_ss58check_with_version(network_override),
 				});
+
+				///
 				println!(
 					"{}",
 					serde_json::to_string_pretty(&json).expect("Json pretty print failed")
 				);
 			},
+
+			///
+			///
+			///
 			OutputType::Text => {
 				println!(
 					"Secret Key URI `{}` is account:\n  \
@@ -149,6 +175,9 @@ pub fn print_from_uri<Pair>(
 		let network_override = network_override.unwrap_or(network);
 
 		match output {
+			///
+			///
+			///
 			OutputType::Json => {
 				let json = json!({
 					"publicKeyUri": uri,
@@ -164,6 +193,10 @@ pub fn print_from_uri<Pair>(
 					serde_json::to_string_pretty(&json).expect("Json pretty print failed")
 				);
 			},
+
+			///
+			///
+			///
 			OutputType::Text => {
 				println!(
 					"Public Key URI `{}` is account:\n  \
@@ -185,6 +218,8 @@ pub fn print_from_uri<Pair>(
 		println!("Invalid phrase/URI given");
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// Try to parse given `public` as hex encoded public key and print relevant information.
 pub fn print_from_public<Pair>(

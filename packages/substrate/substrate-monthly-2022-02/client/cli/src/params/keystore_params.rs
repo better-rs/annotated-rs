@@ -67,6 +67,8 @@ pub fn secret_string_from_str(s: &str) -> std::result::Result<SecretString, Stri
 	std::str::FromStr::from_str(s).map_err(|_| "Could not get SecretString".to_string())
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl KeystoreParams {
 	/// Get the keystore configuration for the parameters
 	///
@@ -89,11 +91,19 @@ impl KeystoreParams {
 		Ok((self.keystore_uri.clone(), KeystoreConfig::Path { path, password }))
 	}
 
+	////////////////////////////////////////////////////////////////////////////////
+
+	///
+	/// todo x:
+	///
 	/// helper method to fetch password from `KeyParams` or read from stdin
 	pub fn read_password(&self) -> error::Result<Option<SecretString>> {
 		let (password_interactive, password) = (self.password_interactive, self.password.clone());
 
 		let pass = if password_interactive {
+			///
+			/// todo x:
+			///
 			let password = rpassword::read_password_from_tty(Some("Key password: "))?;
 			Some(SecretString::new(password))
 		} else {

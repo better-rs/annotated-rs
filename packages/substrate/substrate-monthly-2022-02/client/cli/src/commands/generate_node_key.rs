@@ -22,6 +22,8 @@ use clap::Parser;
 use libp2p::identity::{ed25519 as libp2p_ed25519, PublicKey};
 use std::{fs, path::PathBuf};
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// The `generate-node-key` command
 #[derive(Debug, Parser)]
 #[clap(
