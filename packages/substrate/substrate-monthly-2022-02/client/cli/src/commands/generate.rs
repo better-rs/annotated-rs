@@ -24,10 +24,16 @@ use bip39::{Language, Mnemonic, MnemonicType};
 use clap::Parser;
 
 /// The `generate` command
+///
+/// todo x: 创建一个随机账户
+///
 #[derive(Debug, Clone, Parser)]
 #[clap(name = "generate", about = "Generate a random account")]
 pub struct GenerateCmd {
 	/// The number of words in the phrase to generate. One of 12 (default), 15, 18, 21 and 24.
+	///
+	/// todo x: 生成助记词
+	///
 	#[clap(short = 'w', long, value_name = "WORDS")]
 	words: Option<usize>,
 
@@ -50,7 +56,13 @@ pub struct GenerateCmd {
 
 impl GenerateCmd {
 	/// Run the command
+	///
+	/// todo x: 生成助记词
+	///
 	pub fn run(&self) -> Result<(), Error> {
+		///
+		/// todo x: 助记词合法个数:[ 12, 15, 18, 21, 24 ]
+		///
 		let words = match self.words {
 			Some(words) => MnemonicType::for_word_count(words).map_err(|_| {
 				Error::Input(
@@ -59,12 +71,19 @@ impl GenerateCmd {
 			})?,
 			None => MnemonicType::Words12,
 		};
+
+		///
+		/// todo x: 生成助记词
+		///
 		let mnemonic = Mnemonic::new(words, Language::English);
 		let password = self.keystore_params.read_password()?;
 		let output = self.output_scheme.output_type.clone();
 
 		with_crypto_scheme!(
 			self.crypto_scheme.scheme,
+			///
+			/// todo x:
+			///
 			print_from_uri(
 				mnemonic.phrase(),
 				password,

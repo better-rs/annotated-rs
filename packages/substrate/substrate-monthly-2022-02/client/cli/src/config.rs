@@ -471,12 +471,19 @@ pub trait CliConfiguration<DCV: DefaultConfigurationValues = ()>: Sized {
 	}
 
 	/// Create a Configuration object from the current object
+	///
+	/// todo x:
+	///
 	fn create_configuration<C: SubstrateCli>(
 		&self,
 		cli: &C,
 		tokio_handle: tokio::runtime::Handle,
 	) -> Result<Configuration> {
 		let is_dev = self.is_dev()?;
+
+		///
+		/// todo x: chain_id
+		///
 		let chain_id = self.chain_id(is_dev)?;
 		let chain_spec = cli.load_spec(&chain_id)?;
 		let base_path = self
@@ -614,6 +621,9 @@ pub trait CliConfiguration<DCV: DefaultConfigurationValues = ()>: Sized {
 	where
 		F: FnOnce(&mut LoggerBuilder, &Configuration),
 	{
+		///
+		///
+		///
 		sp_panic_handler::set(support_url, impl_version);
 
 		let mut logger = LoggerBuilder::new(self.log_filters()?);
@@ -658,7 +668,7 @@ pub fn generate_node_name() -> String {
 		let count = node_name.chars().count();
 
 		if count < NODE_NAME_MAX_LENGTH {
-			return node_name
+			return node_name;
 		}
 	}
 }

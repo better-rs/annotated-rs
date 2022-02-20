@@ -31,6 +31,9 @@ pub enum KeySubcommand {
 	GenerateNodeKey(GenerateNodeKeyCmd),
 
 	/// Generate a random account
+	///
+	/// todo x: 创建账号
+	///
 	Generate(GenerateCmd),
 
 	/// Gets a public key and a SS58 address from the provided Secret URI
@@ -48,6 +51,10 @@ impl KeySubcommand {
 	pub fn run<C: SubstrateCli>(&self, cli: &C) -> Result<(), Error> {
 		match self {
 			KeySubcommand::GenerateNodeKey(cmd) => cmd.run(),
+
+			///
+			/// todo x: 创建账号
+			///
 			KeySubcommand::Generate(cmd) => cmd.run(),
 			KeySubcommand::Inspect(cmd) => cmd.run(),
 			KeySubcommand::Insert(cmd) => cmd.run(cli),

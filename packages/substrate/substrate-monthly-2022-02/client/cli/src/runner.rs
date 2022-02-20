@@ -24,17 +24,26 @@ use sc_service::{Configuration, Error as ServiceError, TaskManager};
 use sc_utils::metrics::{TOKIO_THREADS_ALIVE, TOKIO_THREADS_TOTAL};
 use std::marker::PhantomData;
 
+///
+/// todo x: main
+///
 #[cfg(target_family = "unix")]
 async fn main<F, E>(func: F) -> std::result::Result<(), E>
 where
 	F: Future<Output = std::result::Result<(), E>> + future::FusedFuture,
 	E: std::error::Error + Send + Sync + 'static + From<ServiceError>,
 {
+	///
+	/// todo x: tokio 用例
+	///
 	use tokio::signal::unix::{signal, SignalKind};
 
 	let mut stream_int = signal(SignalKind::interrupt()).map_err(ServiceError::Io)?;
 	let mut stream_term = signal(SignalKind::terminate()).map_err(ServiceError::Io)?;
 
+	///
+	/// todo x: recv
+	///
 	let t1 = stream_int.recv().fuse();
 	let t2 = stream_term.recv().fuse();
 	let t3 = func;
@@ -73,6 +82,9 @@ where
 
 /// Build a tokio runtime with all features
 pub fn build_runtime() -> std::result::Result<tokio::runtime::Runtime, std::io::Error> {
+	///
+	/// todo x:
+	///
 	tokio::runtime::Builder::new_multi_thread()
 		.on_thread_start(|| {
 			TOKIO_THREADS_ALIVE.inc();

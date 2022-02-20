@@ -134,9 +134,9 @@ pub trait SubstrateCli: Sized {
 			.about(about.as_str())
 			.version(full_version.as_str())
 			.setting(
-				AppSettings::PropagateVersion |
-					AppSettings::ArgsNegateSubcommands |
-					AppSettings::SubcommandsNegateReqs,
+				AppSettings::PropagateVersion
+					| AppSettings::ArgsNegateSubcommands
+					| AppSettings::SubcommandsNegateReqs,
 			);
 
 		let matches = app.try_get_matches_from(iter).unwrap_or_else(|e| e.exit());
@@ -201,10 +201,21 @@ pub trait SubstrateCli: Sized {
 	/// Create a runner for the command provided in argument. This will create a Configuration and
 	/// a tokio runtime
 	fn create_runner<T: CliConfiguration>(&self, command: &T) -> error::Result<Runner<Self>> {
+		///
+		/// TODO X: 基于 tokio,
+		///
 		let tokio_runtime = build_runtime()?;
+
+		///
+		/// todo x: 创建配置
+		///
 		let config = command.create_configuration(self, tokio_runtime.handle().clone())?;
 
 		command.init(&Self::support_url(), &Self::impl_version(), |_, _| {}, &config)?;
+
+		///
+		///
+		///
 		Runner::new(config, tokio_runtime)
 	}
 

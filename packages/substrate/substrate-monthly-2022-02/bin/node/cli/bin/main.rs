@@ -21,5 +21,9 @@
 #![warn(missing_docs)]
 
 fn main() -> sc_cli::Result<()> {
+	///
+	/// todo x: 入口
+	///   jump to > packages/substrate/substrate-monthly-2022-02/bin/node/cli/src/command.rs
+	///
 	node_cli::run()
 }

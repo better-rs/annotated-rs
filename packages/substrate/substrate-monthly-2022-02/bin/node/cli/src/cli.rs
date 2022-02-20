@@ -51,6 +51,9 @@ pub enum Subcommand {
 	TryRuntime,
 
 	/// Key management cli utilities
+	///
+	/// todo x:
+	///
 	#[clap(subcommand)]
 	Key(sc_cli::KeySubcommand),
 
