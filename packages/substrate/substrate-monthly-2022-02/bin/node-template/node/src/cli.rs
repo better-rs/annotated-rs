@@ -1,5 +1,7 @@
 use sc_cli::RunCmd;
 
+////////////////////////////////////////////////////////////////////////////////
+
 #[derive(Debug, clap::Parser)]
 pub struct Cli {
 	#[clap(subcommand)]
@@ -8,6 +10,8 @@ pub struct Cli {
 	#[clap(flatten)]
 	pub run: RunCmd,
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 #[derive(Debug, clap::Subcommand)]
 pub enum Subcommand {

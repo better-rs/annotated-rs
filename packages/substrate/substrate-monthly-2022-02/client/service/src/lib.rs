@@ -112,6 +112,8 @@ impl RpcHandlers {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// An incomplete set of chain components, but enough to run the chain ops subcommands.
 pub struct PartialComponents<Client, Backend, SelectChain, ImportQueue, TransactionPool, Other> {
 	/// A shared client instance.
@@ -131,6 +133,8 @@ pub struct PartialComponents<Client, Backend, SelectChain, ImportQueue, Transact
 	/// Everything else that needs to be passed into the main build function.
 	pub other: Other,
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// Builds a never-ending future that continuously polls the network.
 ///

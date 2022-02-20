@@ -60,19 +60,40 @@ pub fn run() -> sc_cli::Result<()> {
 	/// todo x:
 	///
 	match &cli.subcommand {
+		///
+		/// todo x:
+		///
 		Some(Subcommand::Key(cmd)) => cmd.run(&cli),
+
+		///
+		/// todo x:
+		///
 		Some(Subcommand::BuildSpec(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.sync_run(|config| cmd.run(config.chain_spec, config.network))
 		},
+
+		////////////////////////////////////////////////////////////////////////////////
+		///
+		/// todo x:
+		///
 		Some(Subcommand::CheckBlock(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
+
+			///
+			/// todo x:
+			///
 			runner.async_run(|config| {
 				let PartialComponents { client, task_manager, import_queue, .. } =
 					service::new_partial(&config)?;
 				Ok((cmd.run(client, import_queue), task_manager))
 			})
 		},
+
+		////////////////////////////////////////////////////////////////////////////////
+		///
+		///
+		///
 		Some(Subcommand::ExportBlocks(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.async_run(|config| {
@@ -107,10 +128,18 @@ pub fn run() -> sc_cli::Result<()> {
 				Ok((cmd.run(client, backend), task_manager))
 			})
 		},
+
+		////////////////////////////////////////////////////////////////////////////////
+		///
+		/// todo x:
+		///
 		Some(Subcommand::Benchmark(cmd)) => {
 			if cfg!(feature = "runtime-benchmarks") {
 				let runner = cli.create_runner(cmd)?;
 
+				///
+				/// todo x: ExecutorDispatch()
+				///
 				runner.sync_run(|config| cmd.run::<Block, service::ExecutorDispatch>(config))
 			} else {
 				Err("Benchmarking wasn't enabled when building the node. You can enable it with \
@@ -118,9 +147,17 @@ pub fn run() -> sc_cli::Result<()> {
 					.into())
 			}
 		},
+
+		////////////////////////////////////////////////////////////////////////////////
+		///
+		///
+		///
 		None => {
 			let runner = cli.create_runner(&cli.run)?;
 			runner.run_node_until_exit(|config| async move {
+				///
+				/// todo x:
+				///
 				service::new_full(config).map_err(sc_cli::Error::Service)
 			})
 		},

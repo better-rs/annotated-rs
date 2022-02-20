@@ -34,6 +34,8 @@ use sc_service::{
 use sc_telemetry::TelemetryEndpoints;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// The `run` command used to run a node.
 #[derive(Debug, Clone, Parser)]
 pub struct RunCmd {
@@ -483,19 +485,19 @@ impl CliConfiguration for RunCmd {
 pub fn is_node_name_valid(_name: &str) -> std::result::Result<(), &str> {
 	let name = _name.to_string();
 	if name.chars().count() >= crate::NODE_NAME_MAX_LENGTH {
-		return Err("Node name too long")
+		return Err("Node name too long");
 	}
 
 	let invalid_chars = r"[\\.@]";
 	let re = Regex::new(invalid_chars).unwrap();
 	if re.is_match(&name) {
-		return Err("Node name should not contain invalid chars such as '.' and '@'")
+		return Err("Node name should not contain invalid chars such as '.' and '@'");
 	}
 
 	let invalid_patterns = r"(https?:\\/+)?(www)+";
 	let re = Regex::new(invalid_patterns).unwrap();
 	if re.is_match(&name) {
-		return Err("Node name should not contain urls")
+		return Err("Node name should not contain urls");
 	}
 
 	Ok(())
@@ -513,7 +515,7 @@ fn rpc_interface(
 			 a validator. Use `--unsafe-rpc-external` or `--rpc-methods=unsafe` if you understand \
 			 the risks. See the options description for more information."
 				.to_owned(),
-		))
+		));
 	}
 
 	if is_external || is_unsafe_external {
@@ -588,7 +590,7 @@ fn parse_cors(s: &str) -> Cors {
 		match part {
 			"all" | "*" => {
 				is_all = true;
-				break
+				break;
 			},
 			other => origins.push(other.to_owned()),
 		}

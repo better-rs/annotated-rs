@@ -23,6 +23,8 @@ use super::{
 };
 use crate::{Error, SubstrateCli};
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Key utilities for the cli.
 #[derive(Debug, clap::Subcommand)]
 pub enum KeySubcommand {
@@ -45,6 +47,8 @@ pub enum KeySubcommand {
 	/// Insert a key to the keystore of a node.
 	Insert(InsertKeyCmd),
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 impl KeySubcommand {
 	/// run the key subcommands
