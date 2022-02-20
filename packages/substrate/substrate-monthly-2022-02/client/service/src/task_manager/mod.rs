@@ -76,6 +76,8 @@ pub struct SpawnTaskHandle {
 	metrics: Option<Metrics>,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl SpawnTaskHandle {
 	/// Spawns the given task with the given name and a group name.
 	/// If group is not specified `DEFAULT_GROUP_NAME` will be used.
@@ -108,6 +110,9 @@ impl SpawnTaskHandle {
 	////////////////////////////////////////////////////////////////////////////////
 
 	/// Helper function that implements the spawning logic. See `spawn` and `spawn_blocking`.
+	///
+	/// TODO X: tokio 异步 I/O
+	///
 	fn spawn_inner(
 		&self,
 		name: &'static str,
@@ -193,6 +198,8 @@ impl SpawnTaskHandle {
 		}
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 impl sp_core::traits::SpawnNamed for SpawnTaskHandle {
 	fn spawn_blocking(
@@ -322,6 +329,9 @@ pub struct TaskManager {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+///
+/// todo x: tokio 异步 I/O 用例
+///
 impl TaskManager {
 	/// If a Prometheus registry is passed, it will be used to report statistics about the
 	/// service tasks.
@@ -348,14 +358,21 @@ impl TaskManager {
 		})
 	}
 
+	////////////////////////////////////////////////////////////////////////////////
+
 	/// Get a handle for spawning tasks.
 	pub fn spawn_handle(&self) -> SpawnTaskHandle {
+		///
+		/// todo x: tokio 异步 I/O 用例
+		///
 		SpawnTaskHandle {
 			on_exit: self.on_exit.clone(),
 			tokio_handle: self.tokio_handle.clone(),
 			metrics: self.metrics.clone(),
 		}
 	}
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// Get a handle for spawning essential tasks.
 	pub fn spawn_essential_handle(&self) -> SpawnEssentialTaskHandle {
