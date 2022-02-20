@@ -108,9 +108,19 @@ pub fn run() -> Result<()> {
 				service::new_full(config).map_err(sc_cli::Error::Service)
 			})
 		},
+
+		///
+		///
+		///
 		Some(Subcommand::Inspect(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 
+			///
+			/// todo x:
+			/// 	sync_run(): 同步调用
+			/// 	Block 定义位置:
+			/// 		packages/substrate/substrate-monthly-2022-02/bin/node/runtime/src/lib.rs
+			///
 			runner.sync_run(|config| cmd.run::<Block, RuntimeApi, ExecutorDispatch>(config))
 		},
 

@@ -673,6 +673,8 @@ pub trait Header:
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Something which fulfills the abstract idea of a Substrate block. It has types for
 /// `Extrinsic` pieces of information as well as a `Header`.
 ///
@@ -716,6 +718,8 @@ pub trait Block:
 	/// creation of an instance.
 	fn encode_from(header: &Self::Header, extrinsics: &[Self::Extrinsic]) -> Vec<u8>;
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// Something that acts like an `Extrinsic`.
 pub trait Extrinsic: Sized + MaybeMallocSizeOf {
@@ -1205,7 +1209,7 @@ impl<'a, T: codec::Input> codec::Input for AppendZerosInput<'a, T> {
 					into[i] = b;
 					i += 1;
 				} else {
-					break
+					break;
 				}
 			}
 			i
@@ -1289,7 +1293,7 @@ impl<T: Encode + Decode, Id: Encode + Decode + TypeId> AccountIdConversion<T> fo
 	fn try_from_sub_account<S: Decode>(x: &T) -> Option<(Self, S)> {
 		x.using_encoded(|d| {
 			if &d[0..4] != Id::TYPE_ID {
-				return None
+				return None;
 			}
 			let mut cursor = &d[4..];
 			let result = Decode::decode(&mut cursor).ok()?;

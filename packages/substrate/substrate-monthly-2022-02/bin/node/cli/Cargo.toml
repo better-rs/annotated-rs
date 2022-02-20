@@ -24,13 +24,25 @@ maintenance = { status = "actively-developed" }
 is-it-maintained-issue-resolution = { repository = "paritytech/substrate" }
 is-it-maintained-open-issues = { repository = "paritytech/substrate" }
 
+################################################################################
+
+
+#
+# todo x: 扩展 cargo 的命令行指令
+#		bin 文件入口
+#
 [[bin]]
 name = "substrate"
 path = "bin/main.rs"
 required-features = ["cli"]
 
+
+################################################################################
+
 [lib]
 crate-type = ["cdylib", "rlib"]
+
+################################################################################
 
 [dependencies]
 # third-party dependencies

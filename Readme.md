@@ -50,6 +50,7 @@ git clone https://github.com/better-rs/annotated-rs.git
 - https://github.com/better-rs/.github/discussions/8
 - 更好的代码跳转
 - 默认单个目标项目内, 是无法自动识别+跳转的
+- Clion Mem:  建议 > 4GB, `Substrate` 工程源码巨大, IDE 默认内存不足
 
 > 以 axum 为例:
 

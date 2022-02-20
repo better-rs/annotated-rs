@@ -80,6 +80,8 @@ impl<Block: BlockT> fmt::Display for BlockId<Block> {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Abstraction over a substrate block.
 #[derive(PartialEq, Eq, Clone, Encode, Decode, RuntimeDebug)]
 #[cfg_attr(feature = "std", derive(Serialize, Deserialize, parity_util_mem::MallocSizeOf))]
@@ -91,6 +93,8 @@ pub struct Block<Header, Extrinsic: MaybeSerialize> {
 	/// The accompanying extrinsics.
 	pub extrinsics: Vec<Extrinsic>,
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 impl<Header, Extrinsic: MaybeSerialize> traits::Block for Block<Header, Extrinsic>
 where
@@ -117,6 +121,8 @@ where
 		(header, extrinsics).encode()
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// Abstraction over a substrate block and justification.
 #[derive(PartialEq, Eq, Clone, Encode, Decode, RuntimeDebug)]

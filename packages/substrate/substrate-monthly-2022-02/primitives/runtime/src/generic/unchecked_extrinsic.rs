@@ -34,6 +34,8 @@ use sp_std::{fmt, prelude::*};
 /// Current version of the [`UncheckedExtrinsic`] format.
 const EXTRINSIC_VERSION: u8 = 4;
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// A extrinsic right from the external world. This is unchecked and so
 /// can contain a signature.
 #[derive(PartialEq, Eq, Clone)]
@@ -48,6 +50,8 @@ where
 	/// The function that should be called.
 	pub function: Call,
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// Manual [`TypeInfo`] implementation because of custom encoding. The data is a valid encoded
 /// `Vec<u8>`, but requires some logic to extract the signature and payload.
@@ -148,7 +152,7 @@ where
 				let signed = lookup.lookup(signed)?;
 				let raw_payload = SignedPayload::new(self.function, extra)?;
 				if !raw_payload.using_encoded(|payload| signature.verify(payload, &signed)) {
-					return Err(InvalidTransaction::BadProof.into())
+					return Err(InvalidTransaction::BadProof.into());
 				}
 
 				let (function, extra, _) = raw_payload.deconstruct();
@@ -245,7 +249,7 @@ where
 		let is_signed = version & 0b1000_0000 != 0;
 		let version = version & 0b0111_1111;
 		if version != EXTRINSIC_VERSION {
-			return Err("Invalid transaction version".into())
+			return Err("Invalid transaction version".into());
 		}
 
 		Ok(Self {

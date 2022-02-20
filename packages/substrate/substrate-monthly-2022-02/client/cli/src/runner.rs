@@ -97,6 +97,11 @@ pub fn build_runtime() -> std::result::Result<tokio::runtime::Runtime, std::io::
 		.build()
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+///
+/// todo x:
+///
 fn run_until_exit<F, E>(
 	tokio_runtime: tokio::runtime::Runtime,
 	future: F,
@@ -109,7 +114,14 @@ where
 	let f = future.fuse();
 	pin_mut!(f);
 
+	///
+	/// todo x:
+	///
 	tokio_runtime.block_on(main(f))?;
+
+	///
+	/// todo x:
+	///
 	drop(task_manager);
 
 	Ok(())
@@ -162,7 +174,12 @@ impl<C: SubstrateCli> Runner<C> {
 		Ok(res?)
 	}
 
+	////////////////////////////////////////////////////////////////////////////////
+
 	/// A helper function that runs a command with the configuration of this node.
+	///
+	/// todo x:
+	///
 	pub fn sync_run<E>(
 		self,
 		runner: impl FnOnce(Configuration) -> std::result::Result<(), E>,
@@ -173,8 +190,13 @@ impl<C: SubstrateCli> Runner<C> {
 		runner(self.config)
 	}
 
+	////////////////////////////////////////////////////////////////////////////////
+
 	/// A helper function that runs a future with tokio and stops if the process receives
 	/// the signal `SIGTERM` or `SIGINT`.
+	///
+	/// todo x: 异步
+	///
 	pub fn async_run<F, E>(
 		self,
 		runner: impl FnOnce(Configuration) -> std::result::Result<(F, TaskManager), E>,
@@ -183,7 +205,14 @@ impl<C: SubstrateCli> Runner<C> {
 		F: Future<Output = std::result::Result<(), E>>,
 		E: std::error::Error + Send + Sync + 'static + From<ServiceError> + From<CliError>,
 	{
+		///
+		///
+		///
 		let (future, task_manager) = runner(self.config)?;
+
+		///
+		/// todo x: 基于 tokio
+		///
 		run_until_exit::<_, E>(self.tokio_runtime, future, task_manager)
 	}
 
