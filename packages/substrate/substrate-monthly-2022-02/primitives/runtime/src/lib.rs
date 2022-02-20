@@ -130,7 +130,7 @@ impl Justifications {
 	/// not inserted.
 	pub fn append(&mut self, justification: Justification) -> bool {
 		if self.get(justification.0).is_some() {
-			return false
+			return false;
 		}
 		self.0.push(justification);
 		true
@@ -202,7 +202,7 @@ impl BuildStorage for sp_core::storage::Storage {
 			if let Some(map) = storage.children_default.get_mut(&k) {
 				map.data.extend(other_map.data.iter().map(|(k, v)| (k.clone(), v.clone())));
 				if !map.child_info.try_update(&other_map.child_info) {
-					return Err("Incompatible child info update".to_string())
+					return Err("Incompatible child info update".to_string());
 				}
 			} else {
 				storage.children_default.insert(k, other_map.clone());
@@ -315,8 +315,14 @@ impl AsRef<[u8]> for MultiSigner {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl traits::IdentifyAccount for MultiSigner {
 	type AccountId = AccountId32;
+
+	///
+	///
+	///
 	fn into_account(self) -> AccountId32 {
 		match self {
 			Self::Ed25519(who) => <[u8; 32]>::from(who).into(),
@@ -403,9 +409,10 @@ impl Verify for MultiSignature {
 			(Self::Ecdsa(ref sig), who) => {
 				let m = sp_io::hashing::blake2_256(msg.get());
 				match sp_io::crypto::secp256k1_ecdsa_recover_compressed(sig.as_ref(), &m) {
-					Ok(pubkey) =>
-						&sp_io::hashing::blake2_256(pubkey.as_ref()) ==
-							<dyn AsRef<[u8; 32]>>::as_ref(who),
+					Ok(pubkey) => {
+						&sp_io::hashing::blake2_256(pubkey.as_ref())
+							== <dyn AsRef<[u8; 32]>>::as_ref(who)
+					},
 					_ => false,
 				}
 			},
@@ -424,8 +431,8 @@ impl Verify for AnySignature {
 		let msg = msg.get();
 		sr25519::Signature::try_from(self.0.as_fixed_bytes().as_ref())
 			.map(|s| s.verify(msg, signer))
-			.unwrap_or(false) ||
-			ed25519::Signature::try_from(self.0.as_fixed_bytes().as_ref())
+			.unwrap_or(false)
+			|| ed25519::Signature::try_from(self.0.as_fixed_bytes().as_ref())
 				.map(|s| match ed25519::Public::from_slice(signer.as_ref()) {
 					Err(()) => false,
 					Ok(signer) => s.verify(msg, &signer),
@@ -515,8 +522,9 @@ impl DispatchError {
 	/// Return the same error but without the attached message.
 	pub fn stripped(self) -> Self {
 		match self {
-			DispatchError::Module { index, error, message: Some(_) } =>
-				DispatchError::Module { index, error, message: None },
+			DispatchError::Module { index, error, message: Some(_) } => {
+				DispatchError::Module { index, error, message: None }
+			},
 			m => m,
 		}
 	}
@@ -688,10 +696,10 @@ impl PartialEq for DispatchError {
 		use DispatchError::*;
 
 		match (self, other) {
-			(CannotLookup, CannotLookup) |
-			(BadOrigin, BadOrigin) |
-			(ConsumerRemaining, ConsumerRemaining) |
-			(NoProviders, NoProviders) => true,
+			(CannotLookup, CannotLookup)
+			| (BadOrigin, BadOrigin)
+			| (ConsumerRemaining, ConsumerRemaining)
+			| (NoProviders, NoProviders) => true,
 
 			(Token(l), Token(r)) => l == r,
 			(Other(l), Other(r)) => l == r,

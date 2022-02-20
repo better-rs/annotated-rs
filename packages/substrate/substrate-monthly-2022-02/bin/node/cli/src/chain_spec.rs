@@ -201,6 +201,8 @@ pub fn staging_testnet_config() -> ChainSpec {
 	)
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Helper function to generate a crypto pair from seed
 pub fn get_from_seed<TPublic: Public>(seed: &str) -> <TPublic::Pair as Pair>::Public {
 	TPublic::Pair::from_string(&format!("//{}", seed), None)
@@ -208,11 +210,16 @@ pub fn get_from_seed<TPublic: Public>(seed: &str) -> <TPublic::Pair as Pair>::Pu
 		.public()
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Helper function to generate an account ID from seed
 pub fn get_account_id_from_seed<TPublic: Public>(seed: &str) -> AccountId
 where
 	AccountPublic: From<<TPublic::Pair as Pair>::Public>,
 {
+	///
+	/// todo x: into_account()
+	///
 	AccountPublic::from(get_from_seed::<TPublic>(seed)).into_account()
 }
 

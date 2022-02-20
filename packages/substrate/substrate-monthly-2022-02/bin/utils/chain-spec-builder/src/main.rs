@@ -116,6 +116,11 @@ fn genesis_constructor(
 	)
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+///
+///
+///
 fn generate_chain_spec(
 	authority_seeds: Vec<String>,
 	nominator_accounts: Vec<String>,
@@ -162,6 +167,11 @@ fn generate_chain_spec(
 	chain_spec.as_json(false).map_err(|err| err)
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+///
+///
+///
 fn generate_authority_keys_and_store(seeds: &[String], keystore_path: &Path) -> Result<(), String> {
 	for (n, seed) in seeds.into_iter().enumerate() {
 		let keystore: SyncCryptoStorePtr = Arc::new(
@@ -191,6 +201,8 @@ fn generate_authority_keys_and_store(seeds: &[String], keystore_path: &Path) -> 
 
 	Ok(())
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 fn print_seeds(
 	authority_seeds: &[String],
@@ -228,6 +240,11 @@ fn print_seeds(
 	println!("//{}", sudo_seed);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+///
+/// todo x:
+///
 fn main() -> Result<(), String> {
 	#[cfg(build_type = "debug")]
 	println!(
@@ -240,6 +257,9 @@ fn main() -> Result<(), String> {
 	let chain_spec_path = builder.chain_spec_path().to_path_buf();
 
 	let (authority_seeds, nominator_accounts, endowed_accounts, sudo_account) = match builder {
+		///
+		/// todo x:
+		///
 		ChainSpecBuilder::Generate { authorities, nominators, endowed, keystore_path, .. } => {
 			let authorities = authorities.max(1);
 			let rand_str = || -> String {
@@ -251,15 +271,28 @@ fn main() -> Result<(), String> {
 			let endowed_seeds = (0..endowed).map(|_| rand_str()).collect::<Vec<_>>();
 			let sudo_seed = rand_str();
 
+			///
+			/// todo x:
+			///
 			print_seeds(&authority_seeds, &nominator_seeds, &endowed_seeds, &sudo_seed);
 
+			////////////////////////////////////////////////////////////////////////////////
+
 			if let Some(keystore_path) = keystore_path {
+				///
+				///
+				///
 				generate_authority_keys_and_store(&authority_seeds, &keystore_path)?;
 			}
+
+			////////////////////////////////////////////////////////////////////////////////
 
 			let nominator_accounts = nominator_seeds
 				.into_iter()
 				.map(|seed| {
+					///
+					///
+					///
 					chain_spec::get_account_id_from_seed::<sr25519::Public>(&seed).to_ss58check()
 				})
 				.collect();
@@ -276,6 +309,11 @@ fn main() -> Result<(), String> {
 
 			(authority_seeds, nominator_accounts, endowed_accounts, sudo_account)
 		},
+
+		////////////////////////////////////////////////////////////////////////////////
+		///
+		///
+		///
 		ChainSpecBuilder::New {
 			authority_seeds,
 			nominator_accounts,
@@ -285,6 +323,11 @@ fn main() -> Result<(), String> {
 		} => (authority_seeds, nominator_accounts, endowed_accounts, sudo_account),
 	};
 
+	////////////////////////////////////////////////////////////////////////////////
+
+	///
+	/// todo x:
+	///
 	let json =
 		generate_chain_spec(authority_seeds, nominator_accounts, endowed_accounts, sudo_account)?;
 

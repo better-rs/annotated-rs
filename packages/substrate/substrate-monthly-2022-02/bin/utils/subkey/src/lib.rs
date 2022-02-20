@@ -52,7 +52,12 @@ pub enum Subkey {
 	Verify(VerifyCmd),
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Run the subkey command, given the appropriate runtime.
+///
+/// todo x:
+///
 pub fn run() -> Result<(), Error> {
 	match Subkey::parse() {
 		Subkey::GenerateNodeKey(cmd) => cmd.run(),
