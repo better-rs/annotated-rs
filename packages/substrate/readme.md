@@ -12,7 +12,7 @@
     - [cli/src/command](./substrate-monthly-2022-02/bin/node/cli/src/command.rs)
         - [client/cli/commands](./substrate-monthly-2022-02/client/cli/src/commands)
 - [bin/utils/subkey](./substrate-monthly-2022-02/bin/utils/subkey/src/main.rs)
-    - 工具入口
+    - subkey: 生成公私钥的小工具
 - [bin/node-template/node/](./substrate-monthly-2022-02/bin/node-template/node/src/main.rs)
 
 >> client/cli/commands/
@@ -88,6 +88,22 @@ substrate-monthly-2022-02
 - https://zhuanlan.zhihu.com/p/161771205
 - https://space.bilibili.com/67358318
 
+> 官方文档: 
+
+- https://docs.substrate.io/tutorials/v3/
+- https://docs.substrate.io/how-to-guides/v3/
+- [create-your-first-substrate-chaincreate-your-first-substrate-chain](https://docs.substrate.io/tutorials/v3/create-your-first-substrate-chain/#prepare-a-substrate-node-using-the-node-template)
+
+> 生态:
+
+- https://substrate.io/ecosystem/
+- https://substrate.io/ecosystem/projects/
+- https://substrate.io/ecosystem/resources/awesome-substrate/
+- https://github.com/substrate-developer-hub/
+
 > notes:
 
+- https://core.tetcoin.org/docs/zh-CN/knowledgebase/runtime/frame
+- https://core.tetcoin.org/docs/zh-CN/tutorials/start-a-private-network/customchain
+- [Substrate 设计总览（二）](https://chainx-org.gitbook.io/chainx/substrate/substrate-she-ji-zong-lan-er)
 - https://whisperd.tech/post/substrate_read_source_code/
