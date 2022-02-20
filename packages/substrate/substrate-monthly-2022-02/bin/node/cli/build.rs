@@ -17,6 +17,9 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 fn main() {
+	///
+	/// todo x: 入口函数
+	///
 	#[cfg(feature = "cli")]
 	cli::main();
 }
@@ -30,6 +33,9 @@ mod cli {
 	use std::{env, fs, path::Path};
 	use substrate_build_script_utils::{generate_cargo_keys, rerun_if_git_head_changed};
 
+	///
+	/// todo x:
+	///
 	pub fn main() {
 		build_shell_completion();
 		generate_cargo_keys();
@@ -43,6 +49,8 @@ mod cli {
 			build_completion(shell);
 		}
 	}
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// Build the shell auto-completion for a given Shell
 	fn build_completion(shell: &Shell) {

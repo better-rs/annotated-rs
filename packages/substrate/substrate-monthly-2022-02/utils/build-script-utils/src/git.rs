@@ -17,6 +17,8 @@
 
 use std::{env, fs, fs::File, io, io::Read, path::PathBuf};
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Make sure the calling `build.rs` script is rerun when `.git/HEAD` or the ref of `.git/HEAD`
 /// changed.
 ///
@@ -29,11 +31,14 @@ pub fn rerun_if_git_head_changed() {
 	let manifest_dir_copy = manifest_dir.clone();
 
 	while manifest_dir.parent().is_some() {
+		///
+		///
+		///
 		match get_git_paths(&manifest_dir) {
 			Err(err) => {
 				eprintln!("cargo:warning=Unable to read the Git repository: {}", err);
 
-				return
+				return;
 			},
 			Ok(None) => {},
 			Ok(Some(paths)) => {
@@ -41,7 +46,7 @@ pub fn rerun_if_git_head_changed() {
 					println!("cargo:rerun-if-changed={}", p.display());
 				}
 
-				return
+				return;
 			},
 		}
 
@@ -53,6 +58,8 @@ pub fn rerun_if_git_head_changed() {
 		manifest_dir_copy.display(),
 	);
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 // Code taken from https://github.com/rustyhorde/vergen/blob/8d522db8c8e16e26c0fc9ea8e6b0247cbf5cca84/src/output/envvar.rs
 fn get_git_paths(path: &PathBuf) -> Result<Option<Vec<PathBuf>>, io::Error> {

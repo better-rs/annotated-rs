@@ -13,6 +13,7 @@
         - [client/cli/commands](./substrate-monthly-2022-02/client/cli/src/commands)
 - [bin/utils/subkey](./substrate-monthly-2022-02/bin/utils/subkey/src/main.rs)
     - 工具入口
+- [bin/node-template/node/](./substrate-monthly-2022-02/bin/node-template/node/src/main.rs)
 
 >> client/cli/commands/
 
