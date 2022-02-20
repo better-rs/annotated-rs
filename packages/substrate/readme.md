@@ -17,6 +17,10 @@
 - [client/cli/src/commands/generate.rs](./substrate-monthly-2022-02/client/cli/src/commands/generate.rs)
     - 生成助记词(单元测试可以执行)
 
+>> 异步 I/O 用法: 
+
+- [client/service/src/task_manager/mod.rs](./substrate-monthly-2022-02/client/service/src/task_manager/mod.rs)
+
 
 
 ## 源码目录结构说明:

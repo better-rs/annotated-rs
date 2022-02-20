@@ -27,6 +27,8 @@ use crate::{
 	SharedParams, State, LOG_TARGET,
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Configurations of the [`Command::OnRuntimeUpgrade`].
 #[derive(Debug, Clone, clap::Parser)]
 pub struct OnRuntimeUpgradeCmd {

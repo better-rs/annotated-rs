@@ -69,7 +69,12 @@ pub struct ExecuteBlockCmd {
 	state: State,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl ExecuteBlockCmd {
+	///
+	///
+	///
 	fn block_at<Block: BlockT>(&self) -> sc_cli::Result<Block::Hash>
 	where
 		Block::Hash: FromStr,
@@ -87,6 +92,8 @@ impl ExecuteBlockCmd {
 			},
 		}
 	}
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	fn block_ws_uri<Block: BlockT>(&self) -> String
 	where
@@ -106,6 +113,8 @@ impl ExecuteBlockCmd {
 		}
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 pub(crate) async fn execute_block<Block, ExecDispatch>(
 	shared: SharedParams,

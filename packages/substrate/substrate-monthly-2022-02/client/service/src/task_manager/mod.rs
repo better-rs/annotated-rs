@@ -43,7 +43,7 @@ pub const DEFAULT_GROUP_NAME: &'static str = "default";
 /// The name of a group a task belongs to.
 ///
 /// This name is passed belong-side the task name to the prometheus metrics and can be used
-/// to group tasks.  
+/// to group tasks.
 pub enum GroupName {
 	/// Sets the group name to `default`.
 	Default,
@@ -65,6 +65,8 @@ impl From<&'static str> for GroupName {
 		Self::Specific(name)
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// An handle for spawning tasks in the service.
 #[derive(Clone)]
@@ -103,6 +105,8 @@ impl SpawnTaskHandle {
 		self.spawn_inner(name, group, task, TaskType::Blocking)
 	}
 
+	////////////////////////////////////////////////////////////////////////////////
+
 	/// Helper function that implements the spawning logic. See `spawn` and `spawn_blocking`.
 	fn spawn_inner(
 		&self,
@@ -127,6 +131,8 @@ impl SpawnTaskHandle {
 			// We do a dummy increase in order for the task to show up in metrics.
 			metrics.tasks_ended.with_label_values(&[name, "finished", group]).inc_by(0);
 		}
+
+		////////////////////////////////////////////////////////////////////////////////
 
 		let future = async move {
 			if let Some(metrics) = metrics {
@@ -162,12 +168,24 @@ impl SpawnTaskHandle {
 		}
 		.in_current_span();
 
+		////////////////////////////////////////////////////////////////////////////////
+
+		///
+		/// TODO X: tokio_handle.spawn()
+		///
 		match task_type {
 			TaskType::Async => {
+				///
+				/// TODO X: 异步写法
+				///
 				self.tokio_handle.spawn(future);
 			},
 			TaskType::Blocking => {
 				let handle = self.tokio_handle.clone();
+
+				///
+				/// TODO X: 异步写法
+				///
 				self.tokio_handle.spawn_blocking(move || {
 					handle.block_on(future);
 				});
@@ -276,6 +294,8 @@ impl sp_core::traits::SpawnEssentialNamed for SpawnEssentialTaskHandle {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Helper struct to manage background/async tasks in Service.
 pub struct TaskManager {
 	/// A future that resolves when the service has exited, this is useful to
@@ -299,6 +319,8 @@ pub struct TaskManager {
 	/// task fails.
 	children: Vec<TaskManager>,
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 impl TaskManager {
 	/// If a Prometheus registry is passed, it will be used to report statistics about the

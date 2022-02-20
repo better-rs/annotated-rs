@@ -292,6 +292,8 @@ mod commands;
 pub(crate) mod parse;
 pub(crate) const LOG_TARGET: &'static str = "try-runtime::cli";
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Possible commands of `try-runtime`.
 #[derive(Debug, Clone, clap::Subcommand)]
 pub enum Command {
@@ -372,6 +374,8 @@ pub enum Command {
 	FollowChain(commands::follow_chain::FollowChainCmd),
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Shared parameters of the `try-runtime` commands
 #[derive(Debug, Clone, clap::Parser)]
 pub struct SharedParams {
@@ -404,6 +408,8 @@ pub struct SharedParams {
 	pub no_spec_name_check: bool,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Our `try-runtime` command.
 ///
 /// See [`Command`] for more info.
@@ -415,6 +421,8 @@ pub struct TryRuntimeCmd {
 	#[clap(subcommand)]
 	pub command: Command,
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// The source of runtime *state* to use.
 #[derive(Debug, Clone, clap::Subcommand)]
@@ -475,10 +483,11 @@ impl State {
 		<Block::Hash as FromStr>::Err: Debug,
 	{
 		Ok(match self {
-			State::Snap { snapshot_path } =>
+			State::Snap { snapshot_path } => {
 				Builder::<Block>::new().mode(Mode::Offline(OfflineConfig {
 					state_snapshot: SnapshotConfig::new(snapshot_path),
-				})),
+				}))
+			},
 			State::Live { snapshot_path, pallets, uri, at, child_tree } => {
 				let at = match at {
 					Some(at_str) => Some(hash_of::<Block>(at_str)?),
@@ -511,6 +520,8 @@ impl State {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl TryRuntimeCmd {
 	pub async fn run<Block, ExecDispatch>(&self, config: Configuration) -> sc_cli::Result<()>
 	where
@@ -523,37 +534,59 @@ impl TryRuntimeCmd {
 		ExecDispatch: NativeExecutionDispatch + 'static,
 	{
 		match &self.command {
-			Command::OnRuntimeUpgrade(ref cmd) =>
+			///
+			///
+			///
+			Command::OnRuntimeUpgrade(ref cmd) => {
 				commands::on_runtime_upgrade::on_runtime_upgrade::<Block, ExecDispatch>(
 					self.shared.clone(),
 					cmd.clone(),
 					config,
 				)
-				.await,
-			Command::OffchainWorker(cmd) =>
+				.await
+			},
+
+			///
+			///
+			///
+			///
+			Command::OffchainWorker(cmd) => {
 				commands::offchain_worker::offchain_worker::<Block, ExecDispatch>(
 					self.shared.clone(),
 					cmd.clone(),
 					config,
 				)
-				.await,
-			Command::ExecuteBlock(cmd) =>
+				.await
+			},
+
+			///
+			///
+			///
+			Command::ExecuteBlock(cmd) => {
 				commands::execute_block::execute_block::<Block, ExecDispatch>(
 					self.shared.clone(),
 					cmd.clone(),
 					config,
 				)
-				.await,
-			Command::FollowChain(cmd) =>
+				.await
+			},
+
+			///
+			///
+			///
+			Command::FollowChain(cmd) => {
 				commands::follow_chain::follow_chain::<Block, ExecDispatch>(
 					self.shared.clone(),
 					cmd.clone(),
 					config,
 				)
-				.await,
+				.await
+			},
 		}
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 impl CliConfiguration for TryRuntimeCmd {
 	fn shared_params(&self) -> &sc_cli::SharedParams {
