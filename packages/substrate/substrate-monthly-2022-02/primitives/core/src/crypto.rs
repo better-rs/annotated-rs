@@ -314,11 +314,19 @@ pub trait Ss58Codec: Sized + AsMut<[u8]> + AsRef<[u8]> + ByteArray {
 		})
 	}
 
+	////////////////////////////////////////////////////////////////////////////////
+
 	/// Return the ss58-check string for this key.
 	#[cfg(feature = "std")]
 	fn to_ss58check_with_version(&self, version: Ss58AddressFormat) -> String {
 		// We mask out the upper two bits of the ident - SS58 Prefix currently only supports 14-bits
 		let ident: u16 = u16::from(version) & 0b0011_1111_1111_1111;
+
+		// eprintln!("debugX: to_ss58check_with_version(): {}", version);
+
+		///
+		/// todo x:
+		///
 		let mut v = match ident {
 			0..=63 => vec![ident as u8],
 			64..=16_383 => {
@@ -336,6 +344,8 @@ pub trait Ss58Codec: Sized + AsMut<[u8]> + AsRef<[u8]> + ByteArray {
 		v.extend(&r.as_bytes()[0..2]);
 		v.to_base58()
 	}
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// Return the ss58-check string for this key.
 	#[cfg(feature = "std")]
@@ -880,11 +890,15 @@ pub trait Pair: CryptoType + Sized + Clone + Send + Sync + 'static {
 		seed: Option<Self::Seed>,
 	) -> Result<(Self, Option<Self::Seed>), Self::DeriveError>;
 
+	////////////////////////////////////////////////////////////////////////////////
+
 	/// Generate new key pair from the provided `seed`.
 	///
 	/// @WARNING: THIS WILL ONLY BE SECURE IF THE `seed` IS SECURE. If it can be guessed
 	/// by an attacker then they can also derive your key.
 	fn from_seed(seed: &Self::Seed) -> Self;
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// Make a new key pair from secret seed material. The slice must be the correct size or
 	/// it will return `None`.
@@ -904,8 +918,15 @@ pub trait Pair: CryptoType + Sized + Clone + Send + Sync + 'static {
 	/// Verify a signature on a message. Returns true if the signature is good.
 	fn verify_weak<P: AsRef<[u8]>, M: AsRef<[u8]>>(sig: &[u8], message: M, pubkey: P) -> bool;
 
+	////////////////////////////////////////////////////////////////////////////////
+
 	/// Get the public key.
+	///
+	/// todo x: 公钥
+	///
 	fn public(&self) -> Self::Public;
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// Interprets the string `s` in order to generate a key Pair. Returns both the pair and an
 	/// optional seed, in the case that the pair can be expressed as a direct derivation from a seed

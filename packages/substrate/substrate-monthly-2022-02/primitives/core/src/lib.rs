@@ -19,6 +19,7 @@
 
 #![warn(missing_docs)]
 #![cfg_attr(not(feature = "std"), no_std)]
+#![allow(unused_doc_comments)] // TODO X: 忽略警告 [/// 注解部分]
 
 /// Initialize a key-value collection from array.
 ///
@@ -119,10 +120,11 @@ impl ExecutionContext {
 			Importing | Syncing | BlockConstruction => offchain::Capabilities::empty(),
 			// Enable keystore, transaction pool and Offchain DB reads by default for offchain
 			// calls.
-			OffchainCall(None) =>
-				offchain::Capabilities::KEYSTORE |
-					offchain::Capabilities::OFFCHAIN_DB_READ |
-					offchain::Capabilities::TRANSACTION_POOL,
+			OffchainCall(None) => {
+				offchain::Capabilities::KEYSTORE
+					| offchain::Capabilities::OFFCHAIN_DB_READ
+					| offchain::Capabilities::TRANSACTION_POOL
+			},
 			OffchainCall(Some((_, capabilities))) => *capabilities,
 		}
 	}
@@ -257,9 +259,10 @@ impl<R: PartialEq + codec::Decode> PartialEq for NativeOrEncoded<R> {
 	fn eq(&self, other: &Self) -> bool {
 		match (self, other) {
 			(NativeOrEncoded::Native(l), NativeOrEncoded::Native(r)) => l == r,
-			(NativeOrEncoded::Native(n), NativeOrEncoded::Encoded(e)) |
-			(NativeOrEncoded::Encoded(e), NativeOrEncoded::Native(n)) =>
-				Some(n) == codec::Decode::decode(&mut &e[..]).ok().as_ref(),
+			(NativeOrEncoded::Native(n), NativeOrEncoded::Encoded(e))
+			| (NativeOrEncoded::Encoded(e), NativeOrEncoded::Native(n)) => {
+				Some(n) == codec::Decode::decode(&mut &e[..]).ok().as_ref()
+			},
 			(NativeOrEncoded::Encoded(l), NativeOrEncoded::Encoded(r)) => l == r,
 		}
 	}

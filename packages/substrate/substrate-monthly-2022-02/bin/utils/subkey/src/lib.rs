@@ -46,6 +46,7 @@ pub enum Subkey {
 	/// Print the peer ID corresponding to the node key in the given file
 	InspectNodeKey(InspectNodeKeyCmd),
 
+	////////////////////////////////////////////////////////////////////////////////
 	/// Sign a message, with a given (secret) key.
 	Sign(SignCmd),
 

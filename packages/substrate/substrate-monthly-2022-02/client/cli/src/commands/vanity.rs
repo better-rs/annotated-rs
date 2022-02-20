@@ -96,6 +96,8 @@ where
 	let mut seed = Pair::Seed::default();
 	let mut done = 0;
 
+	////////////////////////////////////////////////////////////////////////////////
+
 	///
 	/// todo x:
 	///
@@ -107,7 +109,18 @@ where
 		}
 
 		let p = Pair::from_seed(&seed);
+
+		///
+		/// todo x:
+		/// 	public() // 获取公钥
+		/// 	into_account()
+		/// 	to_ss58check_with_version()
+		///
 		let ss58 = p.public().into_account().to_ss58check_with_version(network_override);
+
+		///
+		///
+		///
 		let score = calculate_score(&desired, &ss58);
 		if score > best || desired.len() < 2 {
 			best = score;
@@ -135,6 +148,9 @@ fn good_waypoint(done: u64) -> u64 {
 	}
 }
 
+///
+///
+///
 fn next_seed(seed: &mut [u8]) {
 	for i in 0..seed.len() {
 		match seed[i] {
@@ -149,6 +165,8 @@ fn next_seed(seed: &mut [u8]) {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Calculate the score of a key based on the desired
 /// input.
 fn calculate_score(_desired: &str, key: &str) -> usize {
@@ -161,6 +179,8 @@ fn calculate_score(_desired: &str, key: &str) -> usize {
 	}
 	0
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// checks that `pattern` is non-empty
 fn assert_non_empty_string(pattern: &str) -> Result<String, &'static str> {
@@ -195,8 +215,7 @@ mod tests {
 	#[test]
 	fn test_generation_with_single_char() {
 		///
-		///
-		///
+		/// todo x:
 		///
 		let seed = generate_key::<sr25519::Pair>("ab", default_ss58_version()).unwrap();
 		assert!(sr25519::Pair::from_seed_slice(&hex::decode(&seed[2..]).unwrap())

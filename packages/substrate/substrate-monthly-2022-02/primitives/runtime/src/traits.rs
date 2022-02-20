@@ -72,6 +72,8 @@ pub trait IdentifyAccount {
 	fn into_account(self) -> Self::AccountId;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl IdentifyAccount for sp_core::ed25519::Public {
 	type AccountId = Self;
 	fn into_account(self) -> Self {

@@ -269,6 +269,8 @@ where
 	Ok(())
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// generate a pair from suri
 pub fn pair_from_suri<P: Pair>(suri: &str, password: Option<SecretString>) -> Result<P, Error> {
 	let result = if let Some(pass) = password {

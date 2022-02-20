@@ -21,6 +21,8 @@ use crate::{error, utils, with_crypto_scheme, CryptoSchemeFlag, KeystoreParams};
 use clap::Parser;
 use sp_core::crypto::SecretString;
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// The `sign` command
 #[derive(Debug, Clone, Parser)]
 #[clap(name = "sign", about = "Sign a message, with a given (secret) key")]
