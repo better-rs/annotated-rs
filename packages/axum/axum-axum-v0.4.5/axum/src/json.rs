@@ -84,7 +84,7 @@ use std::ops::{Deref, DerefMut};
 /// ```
 #[derive(Debug, Clone, Copy, Default)]
 #[cfg_attr(docsrs, doc(cfg(feature = "json")))]
-pub struct Json<T>(pub T);
+pub struct Json<T>(pub T); // TODO X: 返回值格式
 
 #[async_trait]
 impl<T, B> FromRequest<B> for Json<T>

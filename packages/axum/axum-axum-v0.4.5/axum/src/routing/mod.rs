@@ -73,8 +73,8 @@ impl RouteId {
 /// The router type for composing handlers and services.
 #[derive(Debug)]
 pub struct Router<B = Body> {
-    routes: HashMap<RouteId, Endpoint<B>>,
-    node: Node,
+    routes: HashMap<RouteId, Endpoint<B>>, // todo x: map 类型
+    node: Node,                            // todo x: 端点
     fallback: Fallback<B>,
     nested_at_root: bool,
 }
@@ -110,10 +110,13 @@ where
     ///
     /// Unless you add additional routes this will respond with `404 Not Found` to
     /// all requests.
+    ///
+    /// todo x: 构造方法
+    ///
     pub fn new() -> Self {
         Self {
-            routes: Default::default(),
-            node: Default::default(),
+            routes: Default::default(), // todo x: 默认值
+            node: Default::default(),   // todo x: 默认值
             fallback: Fallback::Default(Route::new(NotFound)),
             nested_at_root: false,
         }
@@ -151,6 +154,9 @@ where
         let id = RouteId::next();
 
         let service = match try_downcast::<MethodRouter<B, Infallible>, _>(service) {
+            //
+            // todo x: 参数 method_router
+            //
             Ok(method_router) => {
                 //
                 //
@@ -174,6 +180,10 @@ where
                     Endpoint::MethodRouter(method_router)
                 }
             }
+
+            //
+            // todo x: 构造方式:
+            //
             Err(service) => Endpoint::Route(Route::new(service)),
         };
 
@@ -424,7 +434,9 @@ where
     ///
     /// [`MakeService`]: tower::make::MakeService
     pub fn into_make_service(self) -> IntoMakeService<Self> {
+        //
         //  todo x:
+        //
         IntoMakeService::new(self)
     }
 
@@ -625,8 +637,8 @@ pub(crate) struct InvalidUtf8InPathParam {
 #[derive(Clone, Default)]
 struct Node {
     inner: matchit::Node<RouteId>,
-    route_id_to_path: HashMap<RouteId, Arc<str>>, // todo x:
-    path_to_route_id: HashMap<Arc<str>, RouteId>, // todo x:
+    route_id_to_path: HashMap<RouteId, Arc<str>>, // todo x: map 映射表
+    path_to_route_id: HashMap<Arc<str>, RouteId>, // todo x: map 映射表
 }
 
 impl Node {
@@ -670,6 +682,7 @@ impl fmt::Debug for Node {
     }
 }
 
+// todo x:
 enum Fallback<B, E = Infallible> {
     Default(Route<B, E>),
     Custom(Route<B, E>),
@@ -705,6 +718,7 @@ impl<B, E> Fallback<B, E> {
     }
 }
 
+// todo x: 路由端点类型
 enum Endpoint<B> {
     MethodRouter(MethodRouter<B>),
     Route(Route<B>),

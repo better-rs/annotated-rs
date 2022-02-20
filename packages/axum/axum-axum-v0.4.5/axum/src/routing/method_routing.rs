@@ -729,8 +729,14 @@ impl<ReqBody, E> MethodRouter<ReqBody, E> {
         }
     }
 
+    /*
+
+    todo x:
+        merge
+    */
     #[doc = include_str!("../docs/method_routing/merge.md")]
     pub fn merge(self, other: MethodRouter<ReqBody, E>) -> Self {
+        // todo x: 宏定义:
         macro_rules! merge {
             ( $first:ident, $second:ident ) => {
                 match ($first, $second) {

@@ -10,7 +10,10 @@ use tower_service::Service;
 /// [`MakeService`]: tower::make::MakeService
 #[derive(Debug, Clone)]
 pub struct IntoMakeService<S> {
-    svc: S, // todo x:
+    //
+    // todo x: service
+    //
+    svc: S,
 }
 
 impl<S> IntoMakeService<S> {

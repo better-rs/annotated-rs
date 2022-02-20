@@ -56,7 +56,7 @@ async fn main() {
     //----------------------------------------------//
 
     //
-    // todo x: 多线程
+    // todo x: 多线程, join! 是宏定义
     //
     tokio::join!(frontend, backend);
 }
