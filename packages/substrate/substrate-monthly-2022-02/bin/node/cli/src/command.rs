@@ -112,12 +112,12 @@ pub fn run() -> Result<()> {
 
 		////////////////////////////////////////////////////////////////////////////////
 		///
-		/// todo x: 生成助记词
+		/// todo x: 生成助记词, 有单元测试
 		///
 		Some(Subcommand::Key(cmd)) => cmd.run(&cli),
 
 		///
-		/// todo x: 签名
+		/// todo x: 签名, 有单元测试可跑
 		///
 		Some(Subcommand::Sign(cmd)) => cmd.run(),
 
@@ -127,13 +127,21 @@ pub fn run() -> Result<()> {
 		Some(Subcommand::Verify(cmd)) => cmd.run(),
 
 		///
-		///
+		/// todo x: 有单元测试可跑
 		///
 		Some(Subcommand::Vanity(cmd)) => cmd.run(),
+
+		///
+		///
+		///
 		Some(Subcommand::BuildSpec(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.sync_run(|config| cmd.run(config.chain_spec, config.network))
 		},
+
+		///
+		///
+		///
 		Some(Subcommand::CheckBlock(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.async_run(|config| {

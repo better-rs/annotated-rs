@@ -151,6 +151,8 @@ pub type Properties = serde_json::map::Map<String, serde_json::Value>;
 pub trait RuntimeGenesis: Serialize + DeserializeOwned + BuildStorage {}
 impl<T: Serialize + DeserializeOwned + BuildStorage> RuntimeGenesis for T {}
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Common interface of a chain specification.
 pub trait ChainSpec: BuildStorage + Send + Sync {
 	/// Spec name.
@@ -175,8 +177,14 @@ pub trait ChainSpec: BuildStorage + Send + Sync {
 	fn extensions(&self) -> &dyn GetExtension;
 	/// Returns a mutable reference to the defined chain spec extensions.
 	fn extensions_mut(&mut self) -> &mut dyn GetExtension;
+
+	////////////////////////////////////////////////////////////////////////////////
+
 	/// Add a bootnode to the list.
 	fn add_boot_node(&mut self, addr: MultiaddrWithPeerId);
+
+	////////////////////////////////////////////////////////////////////////////////
+
 	/// Return spec as JSON.
 	fn as_json(&self, raw: bool) -> Result<String, String>;
 	/// Return StorageBuilder for this spec.

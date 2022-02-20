@@ -26,6 +26,8 @@ use sp_runtime::{generic::BlockId, traits::Block as BlockT};
 use crate::chain_ops::import_blocks;
 use std::{pin::Pin, sync::Arc};
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Re-validate known block.
 pub fn check_block<B, IQ, C>(
 	client: Arc<C>,
@@ -37,12 +39,19 @@ where
 	B: BlockT + for<'de> serde::Deserialize<'de>,
 	IQ: ImportQueue<B> + 'static,
 {
+	///
+	/// todo x:
+	///
 	match client.block(&block_id) {
 		Ok(Some(block)) => {
 			let mut buf = Vec::new();
 			1u64.encode_to(&mut buf);
 			block.encode_to(&mut buf);
 			let reader = std::io::Cursor::new(buf);
+
+			///
+			/// todo x:
+			///
 			import_blocks(client, import_queue, reader, true, true)
 		},
 		Ok(None) => Box::pin(future::err("Unknown block".into())),

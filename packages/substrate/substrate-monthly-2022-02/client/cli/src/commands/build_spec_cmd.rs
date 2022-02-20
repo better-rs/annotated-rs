@@ -53,6 +53,8 @@ pub struct BuildSpecCmd {
 	pub node_key_params: NodeKeyParams,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl BuildSpecCmd {
 	/// Run the build-spec command
 	pub fn run(
@@ -70,6 +72,12 @@ impl BuildSpecCmd {
 				multiaddr: build_multiaddr![Ip4([127, 0, 0, 1]), Tcp(30333u16)],
 				peer_id,
 			};
+
+			////////////////////////////////////////////////////////////////////////////////
+
+			///
+			/// todo x:
+			///
 			spec.add_boot_node(addr)
 		}
 

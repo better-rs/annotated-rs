@@ -77,8 +77,12 @@ pub enum Subcommand {
 	BuildSpec(sc_cli::BuildSpecCmd),
 
 	/// Validate blocks.
+	///
+	/// todo x:
+	///
 	CheckBlock(sc_cli::CheckBlockCmd),
 
+	////////////////////////////////////////////////////////////////////////////////
 	/// Export blocks.
 	ExportBlocks(sc_cli::ExportBlocksCmd),
 

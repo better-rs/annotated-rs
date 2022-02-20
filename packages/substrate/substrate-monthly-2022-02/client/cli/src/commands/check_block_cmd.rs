@@ -26,6 +26,8 @@ use sc_client_api::{BlockBackend, HeaderBackend};
 use sp_runtime::traits::{Block as BlockT, Header as HeaderT};
 use std::{fmt::Debug, str::FromStr, sync::Arc};
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// The `check-block` command used to validate blocks.
 #[derive(Debug, Clone, Parser)]
 pub struct CheckBlockCmd {
@@ -48,6 +50,8 @@ pub struct CheckBlockCmd {
 	pub import_params: ImportParams,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl CheckBlockCmd {
 	/// Run the check-block command
 	pub async fn run<B, C, IQ>(&self, client: Arc<C>, import_queue: IQ) -> error::Result<()>
@@ -60,6 +64,10 @@ impl CheckBlockCmd {
 		<<B::Header as HeaderT>::Number as FromStr>::Err: Debug,
 	{
 		let start = std::time::Instant::now();
+
+		///
+		/// todo x:
+		///
 		sc_service::chain_ops::check_block(client, import_queue, self.input.parse()?).await?;
 		println!("Completed in {} ms.", start.elapsed().as_millis());
 

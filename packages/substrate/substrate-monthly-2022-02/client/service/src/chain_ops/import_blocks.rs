@@ -103,8 +103,8 @@ where
 	/// Returns the number of blocks read thus far.
 	fn read_block_count(&self) -> u64 {
 		match self {
-			BlockIter::Binary { read_block_count, .. } |
-			BlockIter::Json { read_block_count, .. } => *read_block_count,
+			BlockIter::Binary { read_block_count, .. }
+			| BlockIter::Json { read_block_count, .. } => *read_block_count,
 		}
 	}
 
@@ -228,8 +228,8 @@ impl<B: BlockT> Speedometer<B> {
 			let speed = diff
 				.saturating_mul(10_000)
 				.checked_div(u128::from(elapsed_ms))
-				.map_or(0.0, |s| s as f64) /
-				10.0;
+				.map_or(0.0, |s| s as f64)
+				/ 10.0;
 			info!("📦 Current best block: {} ({:4.1} bps)", self.best_number, speed);
 		} else {
 			// If the number of blocks can't be converted to a regular integer, then we need a more
@@ -287,6 +287,8 @@ where
 	},
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Starts the process of importing blocks.
 pub fn import_blocks<B, IQ, C>(
 	client: Arc<C>,
@@ -324,11 +326,13 @@ where
 				if let (Err(err), hash) = result {
 					warn!("There was an error importing block with hash {:?}: {:?}", hash, err);
 					self.has_error = true;
-					break
+					break;
 				}
 			}
 		}
 	}
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	let mut link = WaitLink::new();
 	let block_iter_res: Result<BlockIter<_, B>, String> = BlockIter::new(input, binary);
@@ -338,7 +342,7 @@ where
 		Err(e) => {
 			// We've encountered an error while creating the block iterator
 			// so we can just return a future that returns an error.
-			return future::ready(Err(Error::Other(e))).boxed()
+			return future::ready(Err(Error::Other(e))).boxed();
 		},
 	};
 
@@ -355,7 +359,14 @@ where
 	let import = future::poll_fn(move |cx| {
 		let client = &client;
 		let queue = &mut import_queue;
+
+		///
+		///
+		///
 		match state.take().expect("state should never be None; qed") {
+			///
+			/// todo x:
+			///
 			ImportState::Reading { mut block_iter } => {
 				match block_iter.next() {
 					None => {
@@ -369,6 +380,11 @@ where
 							delay,
 						});
 					},
+
+					////////////////////////////////////////////////////////////////////////////////
+					///
+					/// todo x:
+					///
 					Some(block_result) => {
 						let read_block_count = block_iter.read_block_count();
 						match block_result {
@@ -383,20 +399,29 @@ where
 										block,
 									});
 								} else {
+									///
+									///
+									///
 									// Queue is not full, we can keep on adding blocks to the queue.
 									import_block_to_queue(block, queue, force);
 									state = Some(ImportState::Reading { block_iter });
 								}
 							},
-							Err(e) =>
+							Err(e) => {
 								return Poll::Ready(Err(Error::Other(format!(
 									"Error reading block #{}: {}",
 									read_block_count, e
-								)))),
+								))))
+							},
 						}
 					},
 				}
 			},
+
+			////////////////////////////////////////////////////////////////////////////////
+			///
+			/// todo x:
+			///
 			ImportState::WaitingForImportQueueToCatchUp { block_iter, mut delay, block } => {
 				let read_block_count = block_iter.read_block_count();
 				if read_block_count - link.imported_blocks >= MAX_PENDING_BLOCKS {
@@ -408,7 +433,7 @@ where
 								delay,
 								block,
 							});
-							return Poll::Pending
+							return Poll::Pending;
 						},
 						Poll::Ready(_) => {
 							delay.reset(Duration::from_millis(DELAY_TIME));
@@ -440,7 +465,7 @@ where
 						read_block_count,
 						client.info().best_number
 					);
-					return Poll::Ready(Ok(()))
+					return Poll::Ready(Ok(()));
 				} else {
 					// Importing is not done, we still have to wait for the queue to finish.
 					// Wait for the delay, because we know the queue is lagging behind.
@@ -451,7 +476,7 @@ where
 								read_block_count,
 								delay,
 							});
-							return Poll::Pending
+							return Poll::Pending;
 						},
 						Poll::Ready(_) => {
 							delay.reset(Duration::from_millis(DELAY_TIME));
@@ -476,7 +501,7 @@ where
 			return Poll::Ready(Err(Error::Other(format!(
 				"Stopping after #{} blocks because of an error",
 				link.imported_blocks
-			))))
+			))));
 		}
 
 		cx.waker().wake_by_ref();
