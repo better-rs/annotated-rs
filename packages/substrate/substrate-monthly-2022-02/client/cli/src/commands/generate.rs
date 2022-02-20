@@ -81,9 +81,9 @@ impl GenerateCmd {
 
 		with_crypto_scheme!(
 			self.crypto_scheme.scheme,
-			///
-			/// todo x:
-			///
+			//
+			// todo x:
+			//
 			print_from_uri(
 				mnemonic.phrase(),
 				password,
@@ -95,10 +95,15 @@ impl GenerateCmd {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 #[cfg(test)]
 mod tests {
 	use super::*;
 
+	///
+	/// todo x: 测试生成助记词, OK
+	///
 	#[test]
 	fn generate() {
 		let generate = GenerateCmd::parse_from(&["generate", "--password", "12345"]);

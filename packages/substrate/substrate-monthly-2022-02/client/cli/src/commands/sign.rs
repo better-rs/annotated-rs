@@ -49,9 +49,14 @@ pub struct SignCmd {
 	pub crypto_scheme: CryptoSchemeFlag,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl SignCmd {
 	/// Run the command
 	pub fn run(&self) -> error::Result<()> {
+		//
+		// todo x:
+		//
 		let message = utils::read_message(self.message.as_ref(), self.hex)?;
 		let suri = utils::read_uri(self.suri.as_ref())?;
 		let password = self.keystore_params.read_password()?;
@@ -72,6 +77,8 @@ fn sign<P: sp_core::Pair>(
 	let pair = utils::pair_from_suri::<P>(suri, password)?;
 	Ok(hex::encode(pair.sign(&message)))
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 #[cfg(test)]
 mod test {

@@ -48,11 +48,16 @@ pub struct VanityCmd {
 	crypto_scheme: CryptoSchemeFlag,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl VanityCmd {
 	/// Run the command
 	pub fn run(&self) -> error::Result<()> {
 		let formated_seed = with_crypto_scheme!(
 			self.crypto_scheme.scheme,
+			//
+			// todo x:
+			//
 			generate_key(
 				&self.pattern,
 				unwrap_or_default_ss58_version(self.network_scheme.network)
@@ -72,6 +77,8 @@ impl VanityCmd {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// genertae a key based on given pattern
 fn generate_key<Pair>(
 	desired: &str,
@@ -89,6 +96,9 @@ where
 	let mut seed = Pair::Seed::default();
 	let mut done = 0;
 
+	///
+	/// todo x:
+	///
 	loop {
 		if done % 100000 == 0 {
 			OsRng.fill_bytes(seed.as_mut());
@@ -103,7 +113,7 @@ where
 			best = score;
 			if best >= top {
 				println!("best: {} == top: {}", best, top);
-				return Ok(utils::format_seed::<Pair>(seed.clone()))
+				return Ok(utils::format_seed::<Pair>(seed.clone()));
 			}
 		}
 		done += 1;
@@ -113,6 +123,8 @@ where
 		}
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 fn good_waypoint(done: u64) -> u64 {
 	match done {
@@ -131,7 +143,7 @@ fn next_seed(seed: &mut [u8]) {
 			},
 			_ => {
 				seed[i] += 1;
-				break
+				break;
 			},
 		}
 	}
@@ -144,7 +156,7 @@ fn calculate_score(_desired: &str, key: &str) -> usize {
 		let snip_size = _desired.len() - truncate;
 		let truncated = &_desired[0..snip_size];
 		if let Some(pos) = key.find(truncated) {
-			return (47 - pos) + (snip_size * 48)
+			return (47 - pos) + (snip_size * 48);
 		}
 	}
 	0
@@ -158,6 +170,8 @@ fn assert_non_empty_string(pattern: &str) -> Result<String, &'static str> {
 		Ok(pattern.to_string())
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 #[cfg(test)]
 mod tests {

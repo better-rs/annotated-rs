@@ -63,9 +63,13 @@ pub enum Subcommand {
 	/// Generate a seed that provides a vanity address.
 	Vanity(sc_cli::VanityCmd),
 
+	////////////////////////////////////////////////////////////////////////////////
+	///
 	/// Sign a message, with a given (secret) key.
+	///
 	Sign(sc_cli::SignCmd),
 
+	////////////////////////////////////////////////////////////////////////////////
 	/// Build a chain specification.
 	BuildSpec(sc_cli::BuildSpecCmd),
 

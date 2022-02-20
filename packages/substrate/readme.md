@@ -9,7 +9,15 @@
 > 入口:
 
 - [bin/node/cli](./substrate-monthly-2022-02/bin/node/cli/bin/main.rs)
-    - [client/cli/commands](./substrate-monthly-2022-02/client/cli/src/commands)
+    - [cli/src/command](./substrate-monthly-2022-02/bin/node/cli/src/command.rs)
+        - [client/cli/commands](./substrate-monthly-2022-02/client/cli/src/commands)
+
+>> client/cli/commands/
+
+- [client/cli/src/commands/generate.rs](./substrate-monthly-2022-02/client/cli/src/commands/generate.rs)
+    - 生成助记词(单元测试可以执行)
+
+
 
 ## 源码目录结构说明:
 
