@@ -28,6 +28,8 @@ pub struct Cli {
 	pub run: sc_cli::RunCmd,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Possible subcommands of the main binary.
 #[derive(Debug, clap::Subcommand)]
 pub enum Subcommand {

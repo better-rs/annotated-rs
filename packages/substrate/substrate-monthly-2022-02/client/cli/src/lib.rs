@@ -45,6 +45,8 @@ pub use sc_service::{ChainSpec, Role};
 pub use sc_tracing::logging::LoggerBuilder;
 pub use sp_version::RuntimeVersion;
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Substrate client CLI
 ///
 /// This trait needs to be defined on the root structopt of the application. It will provide the

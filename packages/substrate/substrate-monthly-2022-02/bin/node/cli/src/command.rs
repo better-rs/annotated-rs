@@ -22,6 +22,13 @@ use node_runtime::{Block, RuntimeApi};
 use sc_cli::{ChainSpec, Result, RuntimeVersion, SubstrateCli};
 use sc_service::PartialComponents;
 
+////////////////////////////////////////////////////////////////////////////////
+
+///
+/// todo x: CLI 入口
+/// 	- SubstrateCli 接口定义位置:
+/// 		packages/substrate/substrate-monthly-2022-02/client/cli/src/lib.rs
+///
 impl SubstrateCli for Cli {
 	fn impl_name() -> String {
 		"Substrate Node".into()
@@ -71,15 +78,28 @@ impl SubstrateCli for Cli {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Parse command line arguments into service configuration.
 ///
-/// TODO X: 入口
+/// TODO X:
+/// 	项目核心入口!
+/// 	项目核心入口!
+/// 	项目核心入口!
 ///
 pub fn run() -> Result<()> {
+	///
+	/// todo x: cli 命令行参数
+	///
 	let cli = Cli::from_args();
 
+	////////////////////////////////////////////////////////////////////////////////
+
 	///
-	/// todo x: sub cmd
+	/// todo x:
+	/// 	sub cmd 项目核心入口!
+	/// 	sub cmd 项目核心入口!
+	///		sub cmd 项目核心入口!
 	///
 	match &cli.subcommand {
 		None => {
