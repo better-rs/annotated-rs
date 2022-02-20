@@ -60,6 +60,9 @@ pub enum Subkey {
 ///
 pub fn run() -> Result<(), Error> {
 	match Subkey::parse() {
+		///
+		/// todo x:
+		///
 		Subkey::GenerateNodeKey(cmd) => cmd.run(),
 
 		///

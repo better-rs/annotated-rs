@@ -37,24 +37,46 @@ pub struct GenerateNodeKeyCmd {
 	file: Option<PathBuf>,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+///
+/// TODO X: libP2P 使用
+///
 impl GenerateNodeKeyCmd {
 	/// Run the command
 	pub fn run(&self) -> Result<(), Error> {
+		///
+		/// todo x: libP2P,
+		///
 		let keypair = libp2p_ed25519::Keypair::generate();
+
+		///
+		///
+		///
 		let secret = keypair.secret();
+
+		///
+		/// todo x:
+		///
 		let peer_id = PublicKey::Ed25519(keypair.public()).to_peer_id();
 		let secret_hex = hex::encode(secret.as_ref());
+		eprintln!("debugX: secret: {}", secret_hex);
 
+		///
+		///
+		///
 		match &self.file {
 			Some(file) => fs::write(file, secret_hex)?,
 			None => print!("{}", secret_hex),
 		}
 
-		eprintln!("{}", peer_id);
+		eprintln!("peer_id: {}", peer_id);
 
 		Ok(())
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 #[cfg(test)]
 mod tests {
@@ -62,12 +84,20 @@ mod tests {
 	use std::io::Read;
 	use tempfile::Builder;
 
+	///
+	/// todo x:
+	///
 	#[test]
 	fn generate_node_key() {
 		let mut file = Builder::new().prefix("keyfile").tempfile().unwrap();
 		let file_path = file.path().display().to_string();
 		let generate = GenerateNodeKeyCmd::parse_from(&["generate-node-key", "--file", &file_path]);
+
+		///
+		/// todo x: run()
+		///
 		assert!(generate.run().is_ok());
+
 		let mut buf = String::new();
 		assert!(file.read_to_string(&mut buf).is_ok());
 		assert!(hex::decode(buf).is_ok());

@@ -18,6 +18,7 @@
 
 #![warn(unused_extern_crates)]
 #![warn(missing_docs)]
+#![allow(unused_doc_comments)] // TODO X: 忽略警告 [/// 注解部分]
 
 //! Substrate-specific P2P networking.
 //!
