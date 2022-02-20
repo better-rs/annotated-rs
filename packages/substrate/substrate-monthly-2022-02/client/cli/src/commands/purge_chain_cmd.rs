@@ -45,12 +45,22 @@ pub struct PurgeChainCmd {
 	pub database_params: DatabaseParams,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+///
+/// todo x: 删除 db 文件
+///
 impl PurgeChainCmd {
 	/// Run the purge command
 	pub fn run(&self, database_config: DatabaseSource) -> error::Result<()> {
+		///
+		/// todo x: 删除 db 文件
+		///
 		let db_path = database_config.path().ok_or_else(|| {
 			error::Error::Input("Cannot purge custom database implementation".into())
 		})?;
+
+		////////////////////////////////////////////////////////////////////////////////
 
 		if !self.yes {
 			print!("Are you sure to remove {:?}? [y/N]: ", &db_path);
@@ -64,11 +74,16 @@ impl PurgeChainCmd {
 				Some('y') | Some('Y') => {},
 				_ => {
 					println!("Aborted");
-					return Ok(())
+					return Ok(());
 				},
 			}
 		}
 
+		////////////////////////////////////////////////////////////////////////////////
+
+		///
+		/// todo x: 删除文件
+		///
 		match fs::remove_dir_all(&db_path) {
 			Ok(_) => {
 				println!("{:?} removed.", &db_path);

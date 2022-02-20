@@ -43,6 +43,8 @@ pub struct RevertCmd {
 	pub pruning_params: PruningParams,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl RevertCmd {
 	/// Run the revert command
 	pub async fn run<B, BA, C>(&self, client: Arc<C>, backend: Arc<BA>) -> error::Result<()>
@@ -53,11 +55,17 @@ impl RevertCmd {
 		<<<B as BlockT>::Header as HeaderT>::Number as FromStr>::Err: Debug,
 	{
 		let blocks = self.num.parse()?;
+
+		///
+		/// todo x:
+		///
 		revert_chain(client, backend, blocks)?;
 
 		Ok(())
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 impl CliConfiguration for RevertCmd {
 	fn shared_params(&self) -> &SharedParams {

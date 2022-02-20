@@ -150,6 +150,10 @@ pub fn run() -> Result<()> {
 				Ok((cmd.run(client, import_queue), task_manager))
 			})
 		},
+
+		///
+		///
+		///
 		Some(Subcommand::ExportBlocks(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.async_run(|config| {
@@ -157,6 +161,10 @@ pub fn run() -> Result<()> {
 				Ok((cmd.run(client, config.database), task_manager))
 			})
 		},
+
+		///
+		///
+		///
 		Some(Subcommand::ExportState(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.async_run(|config| {
@@ -164,6 +172,10 @@ pub fn run() -> Result<()> {
 				Ok((cmd.run(client, config.chain_spec), task_manager))
 			})
 		},
+
+		///
+		///
+		///
 		Some(Subcommand::ImportBlocks(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.async_run(|config| {
@@ -172,10 +184,19 @@ pub fn run() -> Result<()> {
 				Ok((cmd.run(client, import_queue), task_manager))
 			})
 		},
+
+		////////////////////////////////////////////////////////////////////////////////
+		///
+		/// todo x: 删除 db 文件
+		///
 		Some(Subcommand::PurgeChain(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.sync_run(|config| cmd.run(config.database))
 		},
+
+		///
+		/// todo x:
+		///
 		Some(Subcommand::Revert(cmd)) => {
 			let runner = cli.create_runner(cmd)?;
 			runner.async_run(|config| {
@@ -183,6 +204,10 @@ pub fn run() -> Result<()> {
 				Ok((cmd.run(client, backend), task_manager))
 			})
 		},
+
+		///
+		///
+		///
 		#[cfg(feature = "try-runtime")]
 		Some(Subcommand::TryRuntime(cmd)) => {
 			let runner = cli.create_runner(cmd)?;

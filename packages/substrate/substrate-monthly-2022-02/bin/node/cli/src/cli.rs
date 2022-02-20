@@ -42,6 +42,7 @@ pub enum Subcommand {
 	#[clap(name = "benchmark", about = "Benchmark runtime pallets.")]
 	Benchmark(frame_benchmarking_cli::BenchmarkCmd),
 
+	////////////////////////////////////////////////////////////////////////////////
 	/// Try some command against runtime state.
 	#[cfg(feature = "try-runtime")]
 	TryRuntime(try_runtime_cli::TryRuntimeCmd),
@@ -86,6 +87,7 @@ pub enum Subcommand {
 	/// Export blocks.
 	ExportBlocks(sc_cli::ExportBlocksCmd),
 
+	////////////////////////////////////////////////////////////////////////////////
 	/// Export the state of a given block into a chain spec.
 	ExportState(sc_cli::ExportStateCmd),
 
@@ -95,6 +97,7 @@ pub enum Subcommand {
 	/// Remove the whole chain.
 	PurgeChain(sc_cli::PurgeChainCmd),
 
+	////////////////////////////////////////////////////////////////////////////////
 	/// Revert the chain to a previous state.
 	Revert(sc_cli::RevertCmd),
 }

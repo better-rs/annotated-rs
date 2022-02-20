@@ -44,6 +44,8 @@ pub struct ExportStateCmd {
 	pub pruning_params: PruningParams,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl ExportStateCmd {
 	/// Run the `export-state` command
 	pub async fn run<B, BA, C>(
@@ -72,6 +74,8 @@ impl ExportStateCmd {
 		Ok(())
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 impl CliConfiguration for ExportStateCmd {
 	fn shared_params(&self) -> &SharedParams {

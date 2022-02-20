@@ -64,6 +64,8 @@ trait ReadPlusSeek: Read + Seek {}
 
 impl<T: Read + Seek> ReadPlusSeek for T {}
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl ImportBlocksCmd {
 	/// Run the import-blocks command
 	pub async fn run<B, C, IQ>(&self, client: Arc<C>, import_queue: IQ) -> error::Result<()>

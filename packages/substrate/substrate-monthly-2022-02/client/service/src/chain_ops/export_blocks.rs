@@ -28,6 +28,8 @@ use sp_runtime::{
 use sc_client_api::{BlockBackend, UsageProvider};
 use std::{io::Write, pin::Pin, sync::Arc, task::Poll};
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Performs the blocks export.
 pub fn export_blocks<B, C>(
 	client: Arc<C>,
@@ -61,7 +63,7 @@ where
 		let client = &client;
 
 		if last < block {
-			return Poll::Ready(Err("Invalid block range specified".into()))
+			return Poll::Ready(Err("Invalid block range specified".into()));
 		}
 
 		if !wrote_header {
@@ -76,13 +78,14 @@ where
 		}
 
 		match client.block(&BlockId::number(block))? {
-			Some(block) =>
+			Some(block) => {
 				if binary {
 					output.write_all(&block.encode())?;
 				} else {
 					serde_json::to_writer(&mut output, &block)
 						.map_err(|e| format!("Error writing JSON: {}", e))?;
-				},
+				}
+			},
 			// Reached end of the chain.
 			None => return Poll::Ready(Ok(())),
 		}
@@ -90,7 +93,7 @@ where
 			info!("#{}", block);
 		}
 		if block == last {
-			return Poll::Ready(Ok(()))
+			return Poll::Ready(Ok(()));
 		}
 		block += One::one();
 

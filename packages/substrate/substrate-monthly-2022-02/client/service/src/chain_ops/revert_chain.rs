@@ -22,6 +22,8 @@ use sc_client_api::{Backend, UsageProvider};
 use sp_runtime::traits::{Block as BlockT, NumberFor, Zero};
 use std::sync::Arc;
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Performs a revert of `blocks` blocks.
 pub fn revert_chain<B, BA, C>(
 	client: Arc<C>,
@@ -33,6 +35,9 @@ where
 	C: UsageProvider<B>,
 	BA: Backend<B>,
 {
+	///
+	///
+	///
 	let reverted = backend.revert(blocks, false)?;
 	let info = client.usage_info().chain;
 

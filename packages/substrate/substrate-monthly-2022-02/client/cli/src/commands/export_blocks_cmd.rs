@@ -64,6 +64,8 @@ pub struct ExportBlocksCmd {
 	pub database_params: DatabaseParams,
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl ExportBlocksCmd {
 	/// Run the export-blocks command
 	pub async fn run<B, C>(
@@ -76,6 +78,9 @@ impl ExportBlocksCmd {
 		C: BlockBackend<B> + UsageProvider<B> + 'static,
 		<<B::Header as HeaderT>::Number as FromStr>::Err: Debug,
 	{
+		///
+		/// todo x: rocksDB
+		///
 		if let DatabaseSource::RocksDb { ref path, .. } = database_config {
 			info!("DB path: {}", path.display());
 		}
@@ -93,6 +98,8 @@ impl ExportBlocksCmd {
 		export_blocks(client, file, from.into(), to, binary).await.map_err(Into::into)
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 impl CliConfiguration for ExportBlocksCmd {
 	fn shared_params(&self) -> &SharedParams {

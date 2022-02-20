@@ -253,6 +253,8 @@ impl<B: BlockT> Speedometer<B> {
 		self.last_update = Instant::now();
 	}
 
+	////////////////////////////////////////////////////////////////////////////////
+
 	// If more than TIME_BETWEEN_UPDATES has elapsed since last update,
 	// then print and update the speedometer.
 	fn notify_user(&mut self, best_number: NumberFor<B>) {
@@ -451,6 +453,11 @@ where
 					state = Some(ImportState::Reading { block_iter });
 				}
 			},
+
+			////////////////////////////////////////////////////////////////////////////////
+			///
+			///
+			///
 			ImportState::WaitingForImportQueueToFinish {
 				num_expected_blocks,
 				read_block_count,
@@ -492,9 +499,18 @@ where
 			},
 		}
 
+		////////////////////////////////////////////////////////////////////////////////
+
+		///
+		/// todo x:
+		///
 		queue.poll_actions(cx, &mut link);
 
 		let best_number = client.info().best_number;
+
+		///
+		/// todo x:
+		///
 		speedometer.notify_user(best_number);
 
 		if link.has_error {

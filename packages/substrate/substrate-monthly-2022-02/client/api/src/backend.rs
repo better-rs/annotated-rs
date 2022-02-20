@@ -344,7 +344,7 @@ where
 		// this terminates the iterator the first time it fails.
 		if let Some(prefix) = self.prefix {
 			if !next_key.starts_with(&prefix.0[..]) {
-				return None
+				return None;
 			}
 		}
 		self.current_key = next_key.clone();
@@ -502,6 +502,8 @@ pub trait Backend<Block: BlockT>: AuxStore + Send + Sync {
 
 	/// Returns state backend with post-state of given block.
 	fn state_at(&self, block: BlockId<Block>) -> sp_blockchain::Result<Self::State>;
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	/// Attempts to revert the chain by `n` blocks. If `revert_finalized` is set it will attempt to
 	/// revert past any finalized block, this is unsafe and can potentially leave the node in an
