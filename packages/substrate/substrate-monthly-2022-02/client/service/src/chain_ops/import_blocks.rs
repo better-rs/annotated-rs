@@ -117,6 +117,11 @@ where
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+///
+/// todo x: 迭代器
+///
 impl<R, B> Iterator for BlockIter<R, B>
 where
 	R: Read + Seek + 'static,
@@ -124,8 +129,17 @@ where
 {
 	type Item = Result<SignedBlock<B>, String>;
 
+	///
+	///
+	///
 	fn next(&mut self) -> Option<Self::Item> {
+		///
+		///
+		///
 		match self {
+			///
+			///
+			///
 			BlockIter::Binary { num_expected_blocks, read_block_count, reader } => {
 				if read_block_count < num_expected_blocks {
 					let block_result: Result<SignedBlock<B>, _> =
@@ -137,6 +151,11 @@ where
 					None
 				}
 			},
+
+			////////////////////////////////////////////////////////////////////////////////
+			///
+			/// todo x: Json
+			///
 			BlockIter::Json { reader, read_block_count } => {
 				let res = Some(reader.next()?.map_err(|e| e.to_string()));
 				*read_block_count += 1;
@@ -146,6 +165,11 @@ where
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+///
+/// todo x:
+///
 /// Imports the SignedBlock to the queue.
 fn import_block_to_queue<TBl, TImpQu>(
 	signed_block: SignedBlock<TBl>,
@@ -157,6 +181,12 @@ fn import_block_to_queue<TBl, TImpQu>(
 {
 	let (header, extrinsics) = signed_block.block.deconstruct();
 	let hash = header.hash();
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	///
+	/// todo x:
+	///
 	// import queue handles verification and importing it into the client.
 	queue.import_blocks(
 		BlockOrigin::File,
@@ -187,6 +217,8 @@ fn importing_is_done(
 		imported_blocks >= read_block_count
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// Structure used to log the block importing speed.
 struct Speedometer<B: BlockT> {
@@ -304,6 +336,9 @@ where
 	B: BlockT + for<'de> serde::Deserialize<'de>,
 	IQ: ImportQueue<B> + 'static,
 {
+	///
+	///
+	///
 	struct WaitLink {
 		imported_blocks: u64,
 		has_error: bool,
@@ -351,6 +386,8 @@ where
 	let mut state = Some(ImportState::Reading { block_iter });
 	let mut speedometer = Speedometer::<B>::new();
 
+	////////////////////////////////////////////////////////////////////////////////
+
 	// Importing blocks is implemented as a future, because we want the operation to be
 	// interruptible.
 	//
@@ -363,13 +400,16 @@ where
 		let queue = &mut import_queue;
 
 		///
-		///
+		/// todo x:
 		///
 		match state.take().expect("state should never be None; qed") {
 			///
 			/// todo x:
 			///
 			ImportState::Reading { mut block_iter } => {
+				///
+				/// todo x: 迭代器
+				///
 				match block_iter.next() {
 					None => {
 						// The iterator is over: we now need to wait for the import queue to finish.
@@ -389,6 +429,10 @@ where
 					///
 					Some(block_result) => {
 						let read_block_count = block_iter.read_block_count();
+
+						///
+						///
+						///
 						match block_result {
 							Ok(block) => {
 								if read_block_count - link.imported_blocks >= MAX_PENDING_BLOCKS {
@@ -402,13 +446,17 @@ where
 									});
 								} else {
 									///
-									///
+									/// todo x:
 									///
 									// Queue is not full, we can keep on adding blocks to the queue.
 									import_block_to_queue(block, queue, force);
 									state = Some(ImportState::Reading { block_iter });
 								}
 							},
+
+							///
+							///
+							///
 							Err(e) => {
 								return Poll::Ready(Err(Error::Other(format!(
 									"Error reading block #{}: {}",

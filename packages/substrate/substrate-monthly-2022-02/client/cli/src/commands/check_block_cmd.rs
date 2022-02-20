@@ -29,6 +29,9 @@ use std::{fmt::Debug, str::FromStr, sync::Arc};
 ////////////////////////////////////////////////////////////////////////////////
 
 /// The `check-block` command used to validate blocks.
+///
+/// todo x:
+///
 #[derive(Debug, Clone, Parser)]
 pub struct CheckBlockCmd {
 	/// Block hash or number

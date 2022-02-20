@@ -22,6 +22,14 @@
 - [client/service/src/task_manager/mod.rs](./substrate-monthly-2022-02/client/service/src/task_manager/mod.rs)
 
 
+> 代码统计: 39w+ 行
+
+```ruby
+
+-> % find . -name "*.rs" | xargs cat | grep -v ^$ | wc -l
+  390329
+
+```
 
 ## 源码目录结构说明:
 

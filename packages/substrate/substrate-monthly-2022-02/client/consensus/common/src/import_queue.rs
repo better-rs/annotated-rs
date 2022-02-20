@@ -102,6 +102,8 @@ pub trait Verifier<B: BlockT>: Send + Sync {
 	) -> Result<(BlockImportParams<B, ()>, Option<Vec<(CacheKeyId, Vec<u8>)>>), String>;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 /// Blocks import queue API.
 ///
 /// The `import_*` methods can be called in order to send elements for the import queue to verify.
@@ -124,6 +126,8 @@ pub trait ImportQueue<B: BlockT>: Send {
 	/// it is as if this method always returned `Poll::Pending`.
 	fn poll_actions(&mut self, cx: &mut futures::task::Context, link: &mut dyn Link<B>);
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 /// Hooks that the verification queue can use to influence the synchronization
 /// algorithm.
@@ -213,7 +217,7 @@ pub(crate) async fn import_single_block_metered<
 			} else {
 				debug!(target: "sync", "Header {} was not provided ", block.hash);
 			}
-			return Err(BlockImportError::IncompleteHeader(peer))
+			return Err(BlockImportError::IncompleteHeader(peer));
 		},
 	};
 
@@ -228,8 +232,9 @@ pub(crate) async fn import_single_block_metered<
 			trace!(target: "sync", "Block already in chain {}: {:?}", number, hash);
 			Ok(BlockImportStatus::ImportedKnown(number, peer.clone()))
 		},
-		Ok(ImportResult::Imported(aux)) =>
-			Ok(BlockImportStatus::ImportedUnknown(number, aux, peer.clone())),
+		Ok(ImportResult::Imported(aux)) => {
+			Ok(BlockImportStatus::ImportedUnknown(number, aux, peer.clone()))
+		},
 		Ok(ImportResult::MissingState) => {
 			debug!(target: "sync", "Parent state is missing for {}: {:?}, parent: {:?}",
 					number, hash, parent_hash);

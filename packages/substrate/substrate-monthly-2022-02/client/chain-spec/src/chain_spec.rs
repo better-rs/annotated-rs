@@ -367,6 +367,8 @@ impl<G: RuntimeGenesis, E: serde::Serialize + Clone + 'static> ChainSpec<G, E> {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 impl<G, E> crate::ChainSpec for ChainSpec<G, E>
 where
 	G: RuntimeGenesis + 'static,
