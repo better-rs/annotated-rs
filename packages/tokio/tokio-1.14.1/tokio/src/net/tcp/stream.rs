@@ -108,12 +108,17 @@ impl TcpStream {
     ///
     /// [`write_all`]: fn@crate::io::AsyncWriteExt::write_all
     /// [`AsyncWriteExt`]: trait@crate::io::AsyncWriteExt
+    /// todo x: 全异步 + 连接
     pub async fn connect<A: ToSocketAddrs>(addr: A) -> io::Result<TcpStream> {
         let addrs = to_socket_addrs(addr).await?;
 
         let mut last_err = None;
 
+        // 迭代:
         for addr in addrs {
+            ///
+            /// TODO X:
+            ///
             match TcpStream::connect_addr(addr).await {
                 Ok(stream) => return Ok(stream),
                 Err(e) => last_err = Some(e),
@@ -129,11 +134,22 @@ impl TcpStream {
     }
 
     /// Establishes a connection to the specified `addr`.
+    /// todo x: 连接
     async fn connect_addr(addr: SocketAddr) -> io::Result<TcpStream> {
+        ///
+        /// TODO X: 基于 mio::net::TcpStream 实现
+        ///
         let sys = mio::net::TcpStream::connect(addr)?;
+
+        ///
+        /// TODO X: 连接
+        ///
         TcpStream::connect_mio(sys).await
     }
 
+    ///
+    /// TODO X:
+    ///
     pub(crate) async fn connect_mio(sys: mio::net::TcpStream) -> io::Result<TcpStream> {
         let stream = TcpStream::new(sys)?;
 
@@ -143,6 +159,9 @@ impl TcpStream {
         // actually hit an error or not.
         //
         // If all that succeeded then we ship everything on up.
+        ///
+        /// todo x:
+        ///
         poll_fn(|cx| stream.io.registration().poll_write_ready(cx)).await?;
 
         if let Some(e) = stream.io.take_error()? {
@@ -152,7 +171,13 @@ impl TcpStream {
         Ok(stream)
     }
 
+    ///
+    /// todo x:
+    ///
     pub(crate) fn new(connected: mio::net::TcpStream) -> io::Result<TcpStream> {
+        ///
+        /// todo x:
+        ///
         let io = PollEvented::new(connected)?;
         Ok(TcpStream { io })
     }

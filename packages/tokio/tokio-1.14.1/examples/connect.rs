@@ -24,10 +24,20 @@ use std::env;
 use std::error::Error;
 use std::net::SocketAddr;
 
+//
+// todo x:
+//
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     // Determine if we're going to run in TCP or UDP mode
+    ///
+    /// todo x: 命令行传参
+    ///
     let mut args = env::args().skip(1).collect::<Vec<_>>();
+
+    ///
+    /// todo x:
+    ///
     let tcp = match args.iter().position(|a| a == "--udp") {
         Some(i) => {
             args.remove(i);
@@ -46,15 +56,21 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let stdin = stdin.map(|i| i.map(|bytes| bytes.freeze()));
     let stdout = FramedWrite::new(io::stdout(), BytesCodec::new());
 
+    ///
+    /// todo x: connect
+    ///
     if tcp {
-        tcp::connect(&addr, stdin, stdout).await?;
+        tcp::connect(&addr, stdin, stdout).await?; // todo x: TCP 方式, 后面实现
     } else {
-        udp::connect(&addr, stdin, stdout).await?;
+        udp::connect(&addr, stdin, stdout).await?; // todo x: UDP 方式, 后面实现
     }
 
     Ok(())
 }
 
+///
+/// todo x: 子包实现:
+///
 mod tcp {
     use bytes::Bytes;
     use futures::{future, Sink, SinkExt, Stream, StreamExt};
@@ -62,16 +78,33 @@ mod tcp {
     use tokio::net::TcpStream;
     use tokio_util::codec::{BytesCodec, FramedRead, FramedWrite};
 
+    ///
+    /// todo x:
+    ///
     pub async fn connect(
         addr: &SocketAddr,
         mut stdin: impl Stream<Item = Result<Bytes, io::Error>> + Unpin,
         mut stdout: impl Sink<Bytes, Error = io::Error> + Unpin,
     ) -> Result<(), Box<dyn Error>> {
+        ///
+        /// todo x: TCP
+        ///
         let mut stream = TcpStream::connect(addr).await?;
+
+        ///
+        /// todo x: reader/writer
+        ///
         let (r, w) = stream.split();
+
+        ///
+        /// todo x: writer
+        ///
         let mut sink = FramedWrite::new(w, BytesCodec::new());
         // filter map Result<BytesMut, Error> stream into just a Bytes stream to match stdout Sink
         // on the event of an Error, log the error and end the stream
+        ///
+        /// todo x: reader
+        ///
         let mut stream = FramedRead::new(r, BytesCodec::new())
             .filter_map(|i| match i {
                 //BytesMut into Bytes
@@ -83,6 +116,9 @@ mod tcp {
             })
             .map(Ok);
 
+        ///
+        /// todo x:
+        ///
         match future::join(sink.send_all(&mut stdin), stdout.send_all(&mut stream)).await {
             (Err(e), _) | (_, Err(e)) => Err(e.into()),
             _ => Ok(()),
@@ -98,6 +134,9 @@ mod udp {
     use std::net::SocketAddr;
     use tokio::net::UdpSocket;
 
+    ///
+    /// TODO X: UDP connect
+    ///
     pub async fn connect(
         addr: &SocketAddr,
         stdin: impl Stream<Item = Result<Bytes, io::Error>> + Unpin,
@@ -114,23 +153,39 @@ mod udp {
         let socket = UdpSocket::bind(&bind_addr).await?;
         socket.connect(addr).await?;
 
+        ///
+        /// todo x: send/recv
+        ///
         tokio::try_join!(send(stdin, &socket), recv(stdout, &socket))?;
 
         Ok(())
     }
 
+    ///
+    /// todo x: send
+    ///
     async fn send(
         mut stdin: impl Stream<Item = Result<Bytes, io::Error>> + Unpin,
         writer: &UdpSocket,
     ) -> Result<(), io::Error> {
+        ///
+        ///
+        ///
         while let Some(item) = stdin.next().await {
             let buf = item?;
+
+            ///
+            /// todo x: send
+            ///
             writer.send(&buf[..]).await?;
         }
 
         Ok(())
     }
 
+    ///
+    /// todo x: recv
+    ///
     async fn recv(
         mut stdout: impl Sink<Bytes, Error = io::Error> + Unpin,
         reader: &UdpSocket,

@@ -67,12 +67,18 @@ impl Registration {
     ///
     /// - `Ok` if the registration happened successfully
     /// - `Err` if an error was encountered during registration
+    ///
+    /// todo x:
+    ///
     pub(crate) fn new_with_interest_and_handle(
         io: &mut impl Source,
         interest: Interest,
         handle: Handle,
     ) -> io::Result<Registration> {
         let shared = if let Some(inner) = handle.inner() {
+            ///
+            /// todo x:
+            ///
             inner.add_source(io, interest)?
         } else {
             return Err(io::Error::new(

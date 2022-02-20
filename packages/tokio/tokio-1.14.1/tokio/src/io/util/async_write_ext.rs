@@ -120,6 +120,9 @@ cfg_io_util! {
         ///     Ok(())
         /// }
         /// ```
+        ///
+        /// todo x:
+        ///
         fn write<'a>(&'a mut self, src: &'a [u8]) -> Write<'a, Self>
         where
             Self: Unpin,

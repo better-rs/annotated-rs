@@ -78,6 +78,9 @@ impl<E: Source> PollEvented<E> {
     /// explicitly with [`Runtime::enter`](crate::runtime::Runtime::enter) function.
     #[cfg_attr(feature = "signal", allow(unused))]
     pub(crate) fn new(io: E) -> io::Result<Self> {
+        ///
+        /// todo x:
+        ///
         PollEvented::new_with_interest(io, Interest::READABLE | Interest::WRITABLE)
     }
 
@@ -98,14 +101,23 @@ impl<E: Source> PollEvented<E> {
     /// function.
     #[cfg_attr(feature = "signal", allow(unused))]
     pub(crate) fn new_with_interest(io: E, interest: Interest) -> io::Result<Self> {
+        ///
+        /// todo x:
+        ///
         Self::new_with_interest_and_handle(io, interest, Handle::current())
     }
 
+    ///
+    /// todo x:
+    ///
     pub(crate) fn new_with_interest_and_handle(
         mut io: E,
         interest: Interest,
         handle: Handle,
     ) -> io::Result<Self> {
+        ///
+        /// todo x:
+        ///
         let registration = Registration::new_with_interest_and_handle(&mut io, interest, handle)?;
         Ok(Self {
             io: Some(io),
@@ -120,6 +132,9 @@ impl<E: Source> PollEvented<E> {
         all(unix, feature = "signal"),
     ))]
     pub(crate) fn registration(&self) -> &Registration {
+        ///
+        /// todo x:
+        ///
         &self.registration
     }
 

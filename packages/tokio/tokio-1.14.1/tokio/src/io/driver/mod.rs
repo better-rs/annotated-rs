@@ -318,11 +318,17 @@ impl Inner {
     /// Registers an I/O resource with the reactor for a given `mio::Ready` state.
     ///
     /// The registration token is returned.
+    ///
+    /// todo x:
+    ///
     pub(super) fn add_source(
         &self,
         source: &mut impl mio::event::Source,
         interest: Interest,
     ) -> io::Result<slab::Ref<ScheduledIo>> {
+        ///
+        /// todo x:
+        ///
         let (address, shared) = self.io_dispatch.allocate().ok_or_else(|| {
             io::Error::new(
                 io::ErrorKind::Other,
@@ -330,6 +336,9 @@ impl Inner {
             )
         })?;
 
+        ///
+        /// todo x:
+        ///
         let token = GENERATION.pack(shared.generation(), ADDRESS.pack(address.as_usize(), 0));
 
         self.registry

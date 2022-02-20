@@ -123,6 +123,9 @@ impl Default for ScheduledIo {
 }
 
 impl ScheduledIo {
+    ///
+    /// todo x:
+    ///
     pub(crate) fn generation(&self) -> usize {
         GENERATION.unpack(self.readiness.load(Acquire))
     }
