@@ -9,7 +9,7 @@ pwasm-libc/Cargo.lock
 bin/node/runtime/wasm/target/
 **/._*
 **/.criterion/
-.vscode
+# .vscode
 polkadot.*
 .DS_Store
 .idea/
@@ -30,3 +30,4 @@ rls*.log
 # 2022:
 tmp/
 *.log
+.history/

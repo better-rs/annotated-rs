@@ -1,0 +1,10 @@
+{
+    "rust-analyzer.lruCapacity": 1000,
+    "rust-analyzer.cargo.allFeatures": true, // 分析器最大缓存深度
+    // monorepo:
+    "rust-analyzer.linkedProjects": [
+        "packages/axum/axum-axum-v0.4.5/Cargo.toml",
+        "packages/tokio/tokio-1.14.1/Cargo.toml",
+        "packages/substrate/substrate-monthly-2022-02/Cargo.toml", // fix for vscode
+    ]
+}
