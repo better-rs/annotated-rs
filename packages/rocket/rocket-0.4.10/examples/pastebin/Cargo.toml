@@ -1,0 +1,9 @@
+[package]
+name = "pastebin"
+version = "0.0.0"
+workspace = "../../"
+publish = false
+
+[dependencies]
+rocket = { path = "../../core/lib" }
+rand = "0.6"

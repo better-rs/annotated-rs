@@ -1,0 +1,9 @@
+[package]
+name = "static_files"
+version = "0.0.0"
+workspace = "../../"
+publish = false
+
+[dependencies]
+rocket = { path = "../../core/lib" }
+rocket_contrib = { path = "../../contrib/lib" }

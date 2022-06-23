@@ -1,0 +1,13 @@
+[package]
+name = "session"
+version = "0.0.0"
+workspace = "../../"
+publish = false
+
+[dependencies]
+rocket = { path = "../../core/lib", features = ["private-cookies"] }
+
+[dependencies.rocket_contrib]
+path = "../../contrib/lib"
+default-features = false
+features = ["handlebars_templates"]

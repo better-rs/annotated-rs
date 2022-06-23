@@ -7,10 +7,10 @@
 
 > 示例入口:
 
-- [examples](./axum-axum-v0.4.5/examples)
-    - [hello-world](./axum-axum-v0.4.5/examples/hello-world)
+- [examples](./axum-v0.4.5/examples)
+    - [hello-world](./axum-v0.4.5/examples/hello-world)
         - 最简单示例
-    - [cors](./axum-axum-v0.4.5/examples/cors)
+    - [cors](./axum-v0.4.5/examples/cors)
         - 多线程示例
 
 ## 默认注解规则:
@@ -29,5 +29,5 @@
 
 ## 版本说明:
 
-- [axum-axum-v0.4.5](./axum-axum-v0.4.5)
+- [axum-axum-v0.4.5](./axum-v0.4.5)
     - https://github.com/tokio-rs/axum/releases/tag/axum-v0.4.5

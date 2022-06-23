@@ -1,0 +1,68 @@
+error[E0277]: the trait bound `u8: Responder<'_>` is not satisfied
+  --> $DIR/responder-types.rs:11:5
+   |
+11 |     thing: u8,
+   |     ^^^^^^^^^ the trait `Responder<'_>` is not implemented for `u8`
+   |
+   = note: required by `respond_to`
+
+error[E0277]: the trait bound `rocket::http::Header<'_>: std::convert::From<u8>` is not satisfied
+  --> $DIR/responder-types.rs:18:5
+   |
+18 |     other: u8,
+   |     ^^^^^^^^^ the trait `std::convert::From<u8>` is not implemented for `rocket::http::Header<'_>`
+   |
+   = help: the following implementations were found:
+             <rocket::http::Header<'static> as std::convert::From<&'a Cookie<'c>>>
+             <rocket::http::Header<'static> as std::convert::From<AcceptCharset>>
+             <rocket::http::Header<'static> as std::convert::From<AcceptEncoding>>
+             <rocket::http::Header<'static> as std::convert::From<AcceptLanguage>>
+           and 43 others
+   = note: required because of the requirements on the impl of `Into<rocket::http::Header<'_>>` for `u8`
+
+error[E0277]: the trait bound `u8: Responder<'_>` is not satisfied
+  --> $DIR/responder-types.rs:24:5
+   |
+24 |     thing: u8,
+   |     ^^^^^^^^^ the trait `Responder<'_>` is not implemented for `u8`
+   |
+   = note: required by `respond_to`
+
+error[E0277]: the trait bound `rocket::http::Header<'_>: std::convert::From<u8>` is not satisfied
+  --> $DIR/responder-types.rs:26:5
+   |
+26 |     other: u8,
+   |     ^^^^^^^^^ the trait `std::convert::From<u8>` is not implemented for `rocket::http::Header<'_>`
+   |
+   = help: the following implementations were found:
+             <rocket::http::Header<'static> as std::convert::From<&'a Cookie<'c>>>
+             <rocket::http::Header<'static> as std::convert::From<AcceptCharset>>
+             <rocket::http::Header<'static> as std::convert::From<AcceptEncoding>>
+             <rocket::http::Header<'static> as std::convert::From<AcceptLanguage>>
+           and 43 others
+   = note: required because of the requirements on the impl of `Into<rocket::http::Header<'_>>` for `u8`
+
+error[E0277]: the trait bound `rocket::http::Header<'_>: std::convert::From<std::string::String>` is not satisfied
+  --> $DIR/responder-types.rs:34:5
+   |
+34 |     then: String,
+   |     ^^^^^^^^^^^^ the trait `std::convert::From<std::string::String>` is not implemented for `rocket::http::Header<'_>`
+   |
+   = help: the following implementations were found:
+             <rocket::http::Header<'static> as std::convert::From<&'a Cookie<'c>>>
+             <rocket::http::Header<'static> as std::convert::From<AcceptCharset>>
+             <rocket::http::Header<'static> as std::convert::From<AcceptEncoding>>
+             <rocket::http::Header<'static> as std::convert::From<AcceptLanguage>>
+           and 43 others
+   = note: required because of the requirements on the impl of `Into<rocket::http::Header<'_>>` for `std::string::String`
+
+error[E0277]: the trait bound `usize: Responder<'_>` is not satisfied
+   --> $DIR/responder-types.rs:39:13
+    |
+39  | fn foo() -> usize { 0 }
+    |             ^^^^^ the trait `Responder<'_>` is not implemented for `usize`
+    |
+   ::: $WORKSPACE/core/lib/src/handler.rs
+    |
+    |     pub fn from<T: Responder<'r>>(req: &Request, responder: T) -> Outcome<'r> {
+    |                    ------------- required by this bound in `handler::<impl Outcome<rocket::Response<'r>, rocket::http::Status, rocket::Data>>::from`

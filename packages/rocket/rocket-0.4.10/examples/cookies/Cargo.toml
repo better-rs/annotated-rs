@@ -1,0 +1,13 @@
+[package]
+name = "cookies"
+version = "0.0.0"
+workspace = "../../"
+publish = false
+
+[dependencies]
+rocket = { path = "../../core/lib" }
+
+[dependencies.rocket_contrib]
+path = "../../contrib/lib"
+default-features = false
+features = ["handlebars_templates"]
