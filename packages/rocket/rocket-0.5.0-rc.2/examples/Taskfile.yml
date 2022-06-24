@@ -38,3 +38,6 @@ tasks:
     cmds:
       - cd hello/; cargo run
 
+  run:db:
+    cmds:
+      - cd databases/; cargo run

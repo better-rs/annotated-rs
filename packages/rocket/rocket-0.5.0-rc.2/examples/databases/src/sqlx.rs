@@ -1,11 +1,11 @@
-use rocket::{Rocket, Build, futures};
 use rocket::fairing::{self, AdHoc};
 use rocket::response::status::Created;
-use rocket::serde::{Serialize, Deserialize, json::Json};
+use rocket::serde::{json::Json, Deserialize, Serialize};
+use rocket::{futures, Build, Rocket};
 
-use rocket_db_pools::{sqlx, Database, Connection};
+use rocket_db_pools::{sqlx, Connection, Database};
 
-use futures::{stream::TryStreamExt, future::TryFutureExt};
+use futures::{future::TryFutureExt, stream::TryStreamExt};
 
 #[derive(Database)]
 #[database("sqlx")]
@@ -25,9 +25,13 @@ struct Post {
 #[post("/", data = "<post>")]
 async fn create(mut db: Connection<Db>, post: Json<Post>) -> Result<Created<Json<Post>>> {
     // There is no support for `RETURNING`.
-    sqlx::query!("INSERT INTO posts (title, text) VALUES (?, ?)", post.title, post.text)
-        .execute(&mut *db)
-        .await?;
+    sqlx::query!(
+        "INSERT INTO posts (title, text) VALUES (?, ?)",
+        post.title,
+        post.text
+    )
+    .execute(&mut *db)
+    .await?;
 
     Ok(Created::new("/").body(post))
 }
@@ -47,7 +51,13 @@ async fn list(mut db: Connection<Db>) -> Result<Json<Vec<i64>>> {
 async fn read(mut db: Connection<Db>, id: i64) -> Option<Json<Post>> {
     sqlx::query!("SELECT id, title, text FROM posts WHERE id = ?", id)
         .fetch_one(&mut *db)
-        .map_ok(|r| Json(Post { id: Some(r.id), title: r.title, text: r.text }))
+        .map_ok(|r| {
+            Json(Post {
+                id: Some(r.id),
+                title: r.title,
+                text: r.text,
+            })
+        })
         .await
         .ok()
 }
@@ -76,14 +86,18 @@ async fn run_migrations(rocket: Rocket<Build>) -> fairing::Result {
                 error!("Failed to initialize SQLx database: {}", e);
                 Err(rocket)
             }
-        }
+        },
         None => Err(rocket),
     }
 }
 
+//
+//
+//
 pub fn stage() -> AdHoc {
     AdHoc::on_ignite("SQLx Stage", |rocket| async {
-        rocket.attach(Db::init())
+        rocket
+            .attach(Db::init())
             .attach(AdHoc::try_on_ignite("SQLx Migrations", run_migrations))
             .mount("/sqlx", routes![list, create, read, delete, destroy])
     })
