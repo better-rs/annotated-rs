@@ -1,0 +1,22 @@
+[workspace]
+members = [
+  "config",
+  "cookies",
+  "databases",
+  "error-handling",
+  "fairings",
+  "forms",
+  "hello",
+  "manual-routing",
+  "responders",
+  "serialization",
+  "state",
+  "static-files",
+  "templating",
+  "testing",
+  "tls",
+
+  "pastebin",
+  "todo",
+  "chat",
+]

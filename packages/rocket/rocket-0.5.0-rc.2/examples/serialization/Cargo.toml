@@ -1,0 +1,10 @@
+[package]
+name = "serialization"
+version = "0.0.0"
+workspace = "../"
+edition = "2021"
+publish = false
+
+[dependencies.rocket]
+path = "../../core/lib"
+features = ["json", "msgpack", "uuid"]

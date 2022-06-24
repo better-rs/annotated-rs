@@ -1,8 +1,0 @@
-[package]
-name = "optional_redirect"
-version = "0.0.0"
-workspace = "../../"
-publish = false
-
-[dependencies]
-rocket = { path = "../../core/lib" }

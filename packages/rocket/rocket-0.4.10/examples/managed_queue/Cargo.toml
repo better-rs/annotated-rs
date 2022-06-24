@@ -1,9 +1,0 @@
-[package]
-name = "managed_queue"
-version = "0.0.0"
-workspace = "../.."
-publish = false
-
-[dependencies]
-crossbeam = "0.7"
-rocket = { path = "../../core/lib" }
