@@ -5,8 +5,8 @@ version: "3"
 #
 includes:
   rocket:
-    taskfile: packages/rocket/rocket-0.5.0-rc.2/examples/Taskfile.yml
-    dir: packages/rocket/rocket-0.5.0-rc.2/examples/
+    taskfile: packages/rocket/rocket-0.5.0-rc.2/Taskfile.yml
+    dir: packages/rocket/rocket-0.5.0-rc.2/
 
 
 #

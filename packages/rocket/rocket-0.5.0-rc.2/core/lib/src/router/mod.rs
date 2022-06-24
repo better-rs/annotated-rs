@@ -1,7 +1,7 @@
 //! Rocket's router.
 
-mod router;
 mod collider;
+mod router;
 
-pub(crate) use router::*;
 pub(crate) use collider::*;
+pub(crate) use router::*;

@@ -25,13 +25,13 @@
 //! }
 //! ```
 
-use std::hash::{Hash, Hasher};
-use std::collections::hash_map::DefaultHasher;
 use std::borrow::Cow;
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 
+use crate::http::Status;
 use crate::request::Request;
 use crate::response::{self, Responder, Response};
-use crate::http::Status;
 
 /// Sets the status of the response to 201 (Created).
 ///
@@ -139,7 +139,10 @@ impl<'r, R> Created<R> {
     /// let body = response.into_string();
     /// assert_eq!(body.unwrap(), "{ 'resource': 'Hello, world!' }");
     /// ```
-    pub fn tagged_body(mut self, responder: R) -> Self where R: Hash {
+    pub fn tagged_body(mut self, responder: R) -> Self
+    where
+        R: Hash,
+    {
         let mut hasher = &mut DefaultHasher::default();
         responder.hash(&mut hasher);
         let hash = hasher.finish();
@@ -173,7 +176,8 @@ impl<'r, 'o: 'r, R: Responder<'r, 'o>> Responder<'r, 'o> for Created<R> {
             response.raw_header("ETag", format!(r#""{}""#, hash));
         }
 
-        response.status(Status::Created)
+        response
+            .status(Status::Created)
             .raw_header("Location", self.0)
             .ok()
     }
@@ -386,7 +390,6 @@ impl<'r, 'o: 'r, R: Responder<'r, 'o>> Responder<'r, 'o> for NotFound<R> {
             .ok()
     }
 }
-
 
 /// Sets the status of the response to 409 (Conflict).
 ///

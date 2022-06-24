@@ -1,0 +1,43 @@
+version: "3"
+
+#
+# sub namespace: https://taskfile.dev/#/usage?id=including-other-taskfiles
+#
+includes:
+  ex:
+    taskfile: ./examples/Taskfile.yml
+    dir: ./examples/
+
+#
+# global vars: https://taskfile.dev/#/usage?id=variables
+#
+vars:
+  VAR1: "some-var"
+
+# global env:
+env:
+  ENV1: testing
+
+# env file:
+#dotenv:
+#  - .env
+
+################################################################################################
+
+tasks:
+  default:
+    cmds:
+      - task: install
+      - task: run
+
+  fmt:
+    cmds:
+      - cargo +nightly fmt
+
+  run:
+    cmds:
+      - task: ex:run:hello
+
+  init:
+    cmds:
+      - cp .env.local .env

@@ -1,12 +1,12 @@
 use std::fmt::Debug;
 use std::net::{IpAddr, SocketAddr};
 
-use crate::{Request, Route};
-use crate::outcome::{self, IntoOutcome};
 use crate::outcome::Outcome::*;
+use crate::outcome::{self, IntoOutcome};
+use crate::{Request, Route};
 
-use crate::http::{Status, ContentType, Accept, Method, CookieJar};
 use crate::http::uri::{Host, Origin};
+use crate::http::{Accept, ContentType, CookieJar, Method, Status};
 
 /// Type alias for the `Outcome` of a `FromRequest` conversion.
 pub type Outcome<S, E> = outcome::Outcome<S, (Status, E), ()>;
@@ -19,7 +19,7 @@ impl<S, E> IntoOutcome<S, (Status, E), ()> for Result<S, E> {
     fn into_outcome(self, status: Status) -> Outcome<S, E> {
         match self {
             Ok(val) => Success(val),
-            Err(err) => Failure((status, err))
+            Err(err) => Failure((status, err)),
         }
     }
 
@@ -27,7 +27,7 @@ impl<S, E> IntoOutcome<S, (Status, E), ()> for Result<S, E> {
     fn or_forward(self, _: ()) -> Outcome<S, E> {
         match self {
             Ok(val) => Success(val),
-            Err(_) => Forward(())
+            Err(_) => Forward(()),
         }
     }
 }
@@ -414,7 +414,7 @@ impl<'r> FromRequest<'r> for &'r Host<'r> {
     async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         match request.host() {
             Some(host) => Success(host),
-            None => Forward(())
+            None => Forward(()),
         }
     }
 }
@@ -426,7 +426,7 @@ impl<'r> FromRequest<'r> for &'r Route {
     async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         match request.route() {
             Some(route) => Success(route),
-            None => Forward(())
+            None => Forward(()),
         }
     }
 }
@@ -447,7 +447,7 @@ impl<'r> FromRequest<'r> for &'r Accept {
     async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         match request.accept() {
             Some(accept) => Success(accept),
-            None => Forward(())
+            None => Forward(()),
         }
     }
 }
@@ -459,7 +459,7 @@ impl<'r> FromRequest<'r> for &'r ContentType {
     async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         match request.content_type() {
             Some(content_type) => Success(content_type),
-            None => Forward(())
+            None => Forward(()),
         }
     }
 }
@@ -471,7 +471,7 @@ impl<'r> FromRequest<'r> for IpAddr {
     async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         match request.client_ip() {
             Some(addr) => Success(addr),
-            None => Forward(())
+            None => Forward(()),
         }
     }
 }
@@ -483,7 +483,7 @@ impl<'r> FromRequest<'r> for SocketAddr {
     async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         match request.remote() {
             Some(addr) => Success(addr),
-            None => Forward(())
+            None => Forward(()),
         }
     }
 }

@@ -1,8 +1,8 @@
 use std::borrow::Cow;
 
 use crate::ext::IntoOwned;
-use crate::parse::{Extent, IndexedStr, uri::tables::is_pchar};
-use crate::uri::{Error, Path, Query, Data, as_utf8_unchecked, fmt};
+use crate::parse::{uri::tables::is_pchar, Extent, IndexedStr};
+use crate::uri::{as_utf8_unchecked, fmt, Data, Error, Path, Query};
 use crate::{RawStr, RawStrBuf};
 
 /// A URI with an absolute path and optional query: `/path?query`.
@@ -124,12 +124,12 @@ impl<'a> Origin<'a> {
     pub(crate) unsafe fn raw(
         source: Cow<'a, [u8]>,
         path: Extent<&'a [u8]>,
-        query: Option<Extent<&'a [u8]>>
+        query: Option<Extent<&'a [u8]>>,
     ) -> Origin<'a> {
         Origin {
             source: Some(as_utf8_unchecked(source)),
             path: Data::raw(path),
-            query: query.map(Data::raw)
+            query: query.map(Data::raw),
         }
     }
 
@@ -138,7 +138,9 @@ impl<'a> Origin<'a> {
     // resulting `Origin's` are not guaranteed to be valid origin URIs!
     #[doc(hidden)]
     pub fn new<P, Q>(path: P, query: Option<Q>) -> Origin<'a>
-        where P: Into<Cow<'a, str>>, Q: Into<Cow<'a, str>>
+    where
+        P: Into<Cow<'a, str>>,
+        Q: Into<Cow<'a, str>>,
     {
         Origin {
             source: None,
@@ -249,7 +251,7 @@ impl<'a> Origin<'a> {
         Ok(Origin {
             path: origin.path.into_owned(),
             query: origin.query.into_owned(),
-            source: Some(Cow::Owned(string))
+            source: Some(Cow::Owned(string)),
         })
     }
 
@@ -267,7 +269,10 @@ impl<'a> Origin<'a> {
     /// ```
     #[inline]
     pub fn path(&self) -> Path<'_> {
-        Path { source: &self.source, data: &self.path }
+        Path {
+            source: &self.source,
+            data: &self.path,
+        }
     }
 
     /// Returns the query part of this URI without the question mark, if there
@@ -285,7 +290,10 @@ impl<'a> Origin<'a> {
     /// ```
     #[inline]
     pub fn query(&self) -> Option<Query<'_>> {
-        self.query.as_ref().map(|data| Query { source: &self.source, data })
+        self.query.as_ref().map(|data| Query {
+            source: &self.source,
+            data,
+        })
     }
 
     /// Applies the function `f` to the internal `path` and returns a new
@@ -320,7 +328,9 @@ impl<'a> Origin<'a> {
     /// ```
     #[inline]
     pub fn map_path<'s, F, P>(&'s self, f: F) -> Option<Self>
-        where F: FnOnce(&'s RawStr) -> P, P: Into<RawStrBuf> + 's
+    where
+        F: FnOnce(&'s RawStr) -> P,
+        P: Into<RawStrBuf> + 's,
     {
         let path = f(self.path().raw()).into();
         if !path.starts_with('/') || !path.as_bytes().iter().all(is_pchar) {
@@ -451,7 +461,14 @@ mod tests {
         let actual = segments.len();
         if actual != expected {
             eprintln!("Count mismatch: expected {}, got {}.", expected, actual);
-            eprintln!("{}", if actual != expected { "lifetime" } else { "buf" });
+            eprintln!(
+                "{}",
+                if actual != expected {
+                    "lifetime"
+                } else {
+                    "buf"
+                }
+            );
             eprintln!("Segments (for {}):", path);
             for (i, segment) in segments.enumerate() {
                 eprintln!("{}: {}", i, segment);
@@ -464,7 +481,7 @@ mod tests {
     fn eq_segments(path: &str, expected: &[&str]) -> bool {
         let uri = match Origin::parse(path) {
             Ok(uri) => uri,
-            Err(e) => panic!("failed to parse {}: {}", path, e)
+            Err(e) => panic!("failed to parse {}: {}", path, e),
         };
 
         let actual: Vec<&str> = uri.path().segments().collect();
@@ -578,10 +595,7 @@ mod tests {
 
     #[test]
     fn normalized() {
-        let uri_to_string = |s| Origin::parse(s)
-            .unwrap()
-            .into_normalized()
-            .to_string();
+        let uri_to_string = |s| Origin::parse(s).unwrap().into_normalized().to_string();
 
         assert_eq!(uri_to_string("/"), "/".to_string());
         assert_eq!(uri_to_string("//"), "/".to_string());

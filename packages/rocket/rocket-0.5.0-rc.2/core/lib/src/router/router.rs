@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 
-use crate::request::Request;
 use crate::http::{Method, Status};
+use crate::request::Request;
 
-use crate::{Route, Catcher};
 use crate::router::Collide;
+use crate::{Catcher, Route};
 
 #[derive(Debug, Default)]
 pub(crate) struct Router {
@@ -32,7 +32,13 @@ impl Router {
     pub fn add_catcher(&mut self, catcher: Catcher) {
         let catchers = self.catchers.entry(catcher.code).or_default();
         catchers.push(catcher);
-        catchers.sort_by(|a, b| b.base.path().segments().len().cmp(&a.base.path().segments().len()))
+        catchers.sort_by(|a, b| {
+            b.base
+                .path()
+                .segments()
+                .len()
+                .cmp(&a.base.path().segments().len())
+        })
     }
 
     #[inline]
@@ -47,10 +53,11 @@ impl Router {
 
     pub fn route<'r, 'a: 'r>(
         &'a self,
-        req: &'r Request<'r>
+        req: &'r Request<'r>,
     ) -> impl Iterator<Item = &'a Route> + 'r {
         // Note that routes are presorted by ascending rank on each `add`.
-        self.routes.get(&req.method())
+        self.routes
+            .get(&req.method())
             .into_iter()
             .flat_map(move |routes| routes.iter().filter(move |r| r.matches(req)))
     }
@@ -58,15 +65,19 @@ impl Router {
     // For many catchers, using aho-corasick or similar should be much faster.
     pub fn catch<'r>(&self, status: Status, req: &'r Request<'r>) -> Option<&Catcher> {
         // Note that catchers are presorted by descending base length.
-        let explicit = self.catchers.get(&Some(status.code))
+        let explicit = self
+            .catchers
+            .get(&Some(status.code))
             .and_then(|c| c.iter().find(|c| c.matches(status, req)));
 
-        let default = self.catchers.get(&None)
+        let default = self
+            .catchers
+            .get(&None)
             .and_then(|c| c.iter().find(|c| c.matches(status, req)));
 
         match (explicit, default) {
             (None, None) => None,
-            (None, c@Some(_)) | (c@Some(_), None) => c,
+            (None, c @ Some(_)) | (c @ Some(_), None) => c,
             (Some(a), Some(b)) => {
                 if b.base.path().segments().len() > a.base.path().segments().len() {
                     Some(b)
@@ -78,15 +89,17 @@ impl Router {
     }
 
     fn collisions<'a, I, T>(&self, items: I) -> impl Iterator<Item = (T, T)> + 'a
-        where I: Iterator<Item = &'a T> + Clone + 'a, T: Collide + Clone + 'a,
+    where
+        I: Iterator<Item = &'a T> + Clone + 'a,
+        T: Collide + Clone + 'a,
     {
-        items.clone().enumerate()
-            .flat_map(move |(i, a)| {
-                items.clone()
-                    .skip(i + 1)
-                    .filter(move |b| a.collides_with(b))
-                    .map(move |b| (a.clone(), b.clone()))
-            })
+        items.clone().enumerate().flat_map(move |(i, a)| {
+            items
+                .clone()
+                .skip(i + 1)
+                .filter(move |b| a.collides_with(b))
+                .map(move |b| (a.clone(), b.clone()))
+        })
     }
 
     pub fn finalize(&self) -> Result<(), Collisions> {
@@ -94,7 +107,7 @@ impl Router {
         let catchers: Vec<_> = self.collisions(self.catchers()).collect();
 
         if !routes.is_empty() || !catchers.is_empty() {
-            return Err(Collisions { routes, catchers })
+            return Err(Collisions { routes, catchers });
         }
 
         Ok(())
@@ -105,9 +118,9 @@ impl Router {
 mod test {
     use super::*;
 
-    use crate::route::dummy_handler;
+    use crate::http::{uri::Origin, Method, Method::*};
     use crate::local::blocking::Client;
-    use crate::http::{Method, Method::*, uri::Origin};
+    use crate::route::dummy_handler;
 
     impl Router {
         fn has_collisions(&self) -> bool {
@@ -222,12 +235,24 @@ mod test {
     fn test_collisions_query() {
         // Query shouldn't affect things when rankless.
         assert!(rankless_route_collisions(&["/hello?<foo>", "/hello"]));
-        assert!(rankless_route_collisions(&["/<a>?foo=bar", "/hello?foo=bar&cat=fat"]));
-        assert!(rankless_route_collisions(&["/<a>?foo=bar", "/hello?foo=bar&cat=fat"]));
+        assert!(rankless_route_collisions(&[
+            "/<a>?foo=bar",
+            "/hello?foo=bar&cat=fat"
+        ]));
+        assert!(rankless_route_collisions(&[
+            "/<a>?foo=bar",
+            "/hello?foo=bar&cat=fat"
+        ]));
         assert!(rankless_route_collisions(&["/<a>", "/<b>?<foo>"]));
-        assert!(rankless_route_collisions(&["/hello/bob?a=b", "/hello/<b>?d=e"]));
+        assert!(rankless_route_collisions(&[
+            "/hello/bob?a=b",
+            "/hello/<b>?d=e"
+        ]));
         assert!(rankless_route_collisions(&["/<foo>?a=b", "/foo?d=e"]));
-        assert!(rankless_route_collisions(&["/<foo>?a=b&<c>", "/<foo>?d=e&<c>"]));
+        assert!(rankless_route_collisions(&[
+            "/<foo>?a=b&<c>",
+            "/<foo>?d=e&<c>"
+        ]));
         assert!(rankless_route_collisions(&["/<foo>?a=b&<c>", "/<foo>?d=e"]));
     }
 
@@ -244,8 +269,14 @@ mod test {
     #[test]
     fn test_no_collision_when_ranked() {
         assert!(!default_rank_route_collisions(&["/<a>", "/hello"]));
-        assert!(!default_rank_route_collisions(&["/hello/bob", "/hello/<b>"]));
-        assert!(!default_rank_route_collisions(&["/a/b/c/d", "/<a>/<b>/c/d"]));
+        assert!(!default_rank_route_collisions(&[
+            "/hello/bob",
+            "/hello/<b>"
+        ]));
+        assert!(!default_rank_route_collisions(&[
+            "/a/b/c/d",
+            "/<a>/<b>/c/d"
+        ]));
         assert!(!default_rank_route_collisions(&["/hi", "/<hi>"]));
         assert!(!default_rank_route_collisions(&["/a", "/a/<path..>"]));
         assert!(!default_rank_route_collisions(&["/", "/<path..>"]));
@@ -257,7 +288,10 @@ mod test {
         assert!(!default_rank_route_collisions(&["/foo/<_>", "/foo/bar"]));
 
         assert!(!default_rank_route_collisions(&["/<a>/<b>", "/hello/<b>"]));
-        assert!(!default_rank_route_collisions(&["/<a>/<b..>", "/hello/<b>"]));
+        assert!(!default_rank_route_collisions(&[
+            "/<a>/<b..>",
+            "/hello/<b>"
+        ]));
         assert!(!default_rank_route_collisions(&["/<a..>", "/hello/<b>"]));
         assert!(!default_rank_route_collisions(&["/<a..>", "/hello"]));
         assert!(!default_rank_route_collisions(&["/<a>", "/a/<path..>"]));
@@ -274,7 +308,10 @@ mod test {
     fn test_collision_when_ranked_query() {
         assert!(default_rank_route_collisions(&["/a?a=b", "/a?c=d"]));
         assert!(default_rank_route_collisions(&["/a?a=b&<b>", "/a?<c>&c=d"]));
-        assert!(default_rank_route_collisions(&["/a?a=b&<b..>", "/a?<c>&c=d"]));
+        assert!(default_rank_route_collisions(&[
+            "/a?a=b&<b..>",
+            "/a?<c>&c=d"
+        ]));
     }
 
     #[test]
@@ -283,7 +320,10 @@ mod test {
         assert!(!default_rank_route_collisions(&["/hi", "/hi?<c>"]));
         assert!(!default_rank_route_collisions(&["/hi", "/hi?c"]));
         assert!(!default_rank_route_collisions(&["/hi?<c>", "/hi?c"]));
-        assert!(!default_rank_route_collisions(&["/<foo>?a=b", "/<foo>?c=d&<d>"]));
+        assert!(!default_rank_route_collisions(&[
+            "/<foo>?a=b",
+            "/<foo>?c=d&<d>"
+        ]));
     }
 
     fn matches<'a>(router: &'a Router, method: Method, uri: &'a str) -> Vec<&'a Route> {
@@ -370,12 +410,12 @@ mod test {
     }
 
     macro_rules! assert_ranked_match {
-        ($routes:expr, $to:expr => $want:expr) => ({
+        ($routes:expr, $to:expr => $want:expr) => {{
             let router = router_with_routes($routes);
             assert!(!router.has_collisions());
             let route_path = route(&router, Get, $to).unwrap().uri.to_string();
             assert_eq!(route_path, $want.to_string());
-        })
+        }};
     }
 
     #[test]

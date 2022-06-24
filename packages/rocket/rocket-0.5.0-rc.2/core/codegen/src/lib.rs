@@ -1,9 +1,7 @@
-#![recursion_limit="128"]
-
+#![recursion_limit = "128"]
 #![doc(html_root_url = "https://api.rocket.rs/v0.5-rc")]
 #![doc(html_favicon_url = "https://rocket.rs/images/favicon.ico")]
 #![doc(html_logo_url = "https://rocket.rs/images/logo-boxed.png")]
-
 #![warn(rust_2018_idioms, missing_docs)]
 
 //! # Rocket - Code Generation
@@ -54,19 +52,20 @@
 //! ROCKET_CODEGEN_DEBUG=1 cargo build
 //! ```
 
-#[macro_use] extern crate quote;
+#[macro_use]
+extern crate quote;
 
 use rocket_http as http;
 
 #[macro_use]
 mod exports;
-mod proc_macro_ext;
-mod derive;
 mod attribute;
 mod bang;
+mod derive;
 mod http_codegen;
-mod syn_ext;
 mod name;
+mod proc_macro_ext;
+mod syn_ext;
 
 use crate::http::Method;
 use proc_macro::TokenStream;
@@ -74,8 +73,9 @@ use proc_macro::TokenStream;
 static URI_MACRO_PREFIX: &str = "rocket_uri_macro_";
 static ROCKET_IDENT_PREFIX: &str = "__rocket_";
 
+// todo x:
 macro_rules! emit {
-    ($tokens:expr) => ({
+    ($tokens:expr) => {{
         use devise::ext::SpanDiagnosticExt;
 
         let mut tokens = $tokens;
@@ -89,11 +89,11 @@ macro_rules! emit {
         }
 
         tokens.into()
-    })
+    }};
 }
 
 macro_rules! route_attribute {
-    ($name:ident => $method:expr) => (
+    ($name:ident => $method:expr) => {
         /// Attribute to generate a [`Route`] and associated metadata.
         ///
         /// This and all other route attributes can only be applied to free
@@ -276,7 +276,7 @@ macro_rules! route_attribute {
         pub fn $name(args: TokenStream, input: TokenStream) -> TokenStream {
             emit!(attribute::route::route_attribute($method, args, input))
         }
-    )
+    };
 }
 
 route_attribute!(route => None);
@@ -477,6 +477,7 @@ pub fn main(args: TokenStream, input: TokenStream) -> TokenStream {
 /// ```
 #[proc_macro_attribute]
 pub fn launch(args: TokenStream, input: TokenStream) -> TokenStream {
+    // todo x:
     emit!(attribute::entry::launch_attribute(args, input))
 }
 
@@ -1114,6 +1115,9 @@ pub fn derive_uri_display_path(input: TokenStream) -> TokenStream {
 /// [`Route`]: ../rocket/struct.Route.html
 #[proc_macro]
 pub fn routes(input: TokenStream) -> TokenStream {
+    //
+    // todo x:
+    //
     emit!(bang::routes_macro(input))
 }
 

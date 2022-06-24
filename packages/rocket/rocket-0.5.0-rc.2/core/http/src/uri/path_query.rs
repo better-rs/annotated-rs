@@ -1,13 +1,13 @@
-use std::hash::Hash;
 use std::borrow::Cow;
 use std::fmt::Write;
+use std::hash::Hash;
 
 use state::Storage;
 
-use crate::{RawStr, ext::IntoOwned};
-use crate::uri::Segments;
+use crate::parse::{Extent, IndexedStr};
 use crate::uri::fmt::{self, Part};
-use crate::parse::{IndexedStr, Extent};
+use crate::uri::Segments;
+use crate::{ext::IntoOwned, RawStr};
 
 // INTERNAL DATA STRUCTURE.
 #[doc(hidden)]
@@ -19,7 +19,10 @@ pub struct Data<'a, P: Part> {
 
 impl<'a, P: Part> Data<'a, P> {
     pub(crate) fn raw(value: Extent<&'a [u8]>) -> Self {
-        Data { value: value.into(), decoded_segments: Storage::new() }
+        Data {
+            value: value.into(),
+            decoded_segments: Storage::new(),
+        }
     }
 
     // INTERNAL METHOD.
@@ -48,7 +51,7 @@ pub struct Query<'a> {
 
 fn decode_to_indexed_str<P: fmt::Part>(
     value: &RawStr,
-    (indexed, source): (&IndexedStr<'_>, &RawStr)
+    (indexed, source): (&IndexedStr<'_>, &RawStr),
 ) -> IndexedStr<'static> {
     let decoded = match P::KIND {
         fmt::Kind::Path => value.percent_decode_lossy(),
@@ -98,8 +101,7 @@ impl<'a> Path<'a> {
     ///
     /// If `absolute`, then a starting  `/` is required.
     pub(crate) fn is_normalized(&self, absolute: bool) -> bool {
-        (!absolute || self.raw().starts_with('/'))
-            && self.raw_segments().all(|s| !s.is_empty())
+        (!absolute || self.raw().starts_with('/')) && self.raw_segments().all(|s| !s.is_empty())
     }
 
     /// Normalizes `self`. If `absolute`, a starting  `/` is required.
@@ -107,7 +109,9 @@ impl<'a> Path<'a> {
         let mut path = String::with_capacity(self.raw().len());
         let absolute = absolute || self.raw().starts_with('/');
         for (i, seg) in self.raw_segments().filter(|s| !s.is_empty()).enumerate() {
-            if absolute || i != 0 { path.push('/'); }
+            if absolute || i != 0 {
+                path.push('/');
+            }
             let _ = write!(path, "{}", seg);
         }
 
@@ -154,7 +158,7 @@ impl<'a> Path<'a> {
         let path = match self.raw() {
             p if p.is_empty() || p == "/" => None,
             p if p.starts_with(fmt::Path::DELIMITER) => Some(&p[1..]),
-            p => Some(p)
+            p => Some(p),
         };
 
         path.map(|p| p.split(fmt::Path::DELIMITER))
@@ -225,7 +229,9 @@ impl<'a> Query<'a> {
     pub(crate) fn to_normalized(self) -> Option<Data<'static, fmt::Query>> {
         let mut query = String::with_capacity(self.raw().len());
         for (i, seg) in self.raw_segments().filter(|s| !s.is_empty()).enumerate() {
-            if i != 0 { query.push('&'); }
+            if i != 0 {
+                query.push('&');
+            }
             let _ = write!(query, "{}", seg);
         }
 
@@ -274,10 +280,11 @@ impl<'a> Query<'a> {
     pub fn raw_segments(&self) -> impl Iterator<Item = &'a RawStr> {
         let query = match self.raw() {
             q if q.is_empty() => None,
-            q => Some(q)
+            q => Some(q),
         };
 
-        query.map(|p| p.split(fmt::Query::DELIMITER))
+        query
+            .map(|p| p.split(fmt::Query::DELIMITER))
             .into_iter()
             .flatten()
     }
@@ -318,7 +325,7 @@ impl<'a> Query<'a> {
 }
 
 macro_rules! impl_partial_eq {
-    ($A:ty = $B:ty) => (
+    ($A:ty = $B:ty) => {
         impl PartialEq<$A> for $B {
             #[inline(always)]
             fn eq(&self, other: &$A) -> bool {
@@ -327,7 +334,7 @@ macro_rules! impl_partial_eq {
                 left == right
             }
         }
-    )
+    };
 }
 
 macro_rules! impl_traits {

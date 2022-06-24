@@ -1,13 +1,13 @@
-use crate::http::{RawStr, Status};
-use crate::request::{Request, local_cache};
 use crate::data::{Data, Limits};
-use crate::outcome::{self, IntoOutcome, try_outcome, Outcome::*};
+use crate::http::{RawStr, Status};
+use crate::outcome::{self, try_outcome, IntoOutcome, Outcome::*};
+use crate::request::{local_cache, Request};
 
 /// Type alias for the `Outcome` of [`FromData`].
 ///
 /// [`FromData`]: crate::data::FromData
-pub type Outcome<'r, T, E = <T as FromData<'r>>::Error>
-    = outcome::Outcome<T, (Status, E), Data<'r>>;
+pub type Outcome<'r, T, E = <T as FromData<'r>>::Error> =
+    outcome::Outcome<T, (Status, E), Data<'r>>;
 
 impl<'r, S, E> IntoOutcome<S, (Status, E), Data<'r>> for Result<S, E> {
     type Failure = Status;
@@ -17,7 +17,7 @@ impl<'r, S, E> IntoOutcome<S, (Status, E), Data<'r>> for Result<S, E> {
     fn into_outcome(self, status: Status) -> Outcome<'r, S, E> {
         match self {
             Ok(val) => Success(val),
-            Err(err) => Failure((status, err))
+            Err(err) => Failure((status, err)),
         }
     }
 
@@ -25,7 +25,7 @@ impl<'r, S, E> IntoOutcome<S, (Status, E), Data<'r>> for Result<S, E> {
     fn or_forward(self, data: Data<'r>) -> Outcome<'r, S, E> {
         match self {
             Ok(val) => Success(val),
-            Err(_) => Forward(data)
+            Err(_) => Forward(data),
         }
     }
 }
@@ -202,7 +202,10 @@ impl<'r> FromData<'r> for Capped<String> {
 
     async fn from_data(req: &'r Request<'_>, data: Data<'r>) -> Outcome<'r, Self> {
         let limit = req.limits().get("string").unwrap_or(Limits::STRING);
-        data.open(limit).into_string().await.into_outcome(Status::BadRequest)
+        data.open(limit)
+            .into_string()
+            .await
+            .into_outcome(Status::BadRequest)
     }
 }
 
@@ -265,7 +268,10 @@ impl<'r> FromData<'r> for Capped<Vec<u8>> {
 
     async fn from_data(req: &'r Request<'_>, data: Data<'r>) -> Outcome<'r, Self> {
         let limit = req.limits().get("bytes").unwrap_or(Limits::BYTES);
-        data.open(limit).into_bytes().await.into_outcome(Status::BadRequest)
+        data.open(limit)
+            .into_bytes()
+            .await
+            .into_outcome(Status::BadRequest)
     }
 }
 

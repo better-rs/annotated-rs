@@ -23,6 +23,10 @@ impl Segment {
             }
         }
 
-        Segment { value: value.to_string(), dynamic, trailing }
+        Segment {
+            value: value.to_string(),
+            dynamic,
+            trailing,
+        }
     }
 }

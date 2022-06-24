@@ -1,13 +1,13 @@
+use std::any::type_name;
 use std::fmt;
 use std::ops::Deref;
-use std::any::type_name;
 
 use ref_cast::RefCast;
 
-use crate::{Phase, Rocket, Ignite, Sentinel};
-use crate::request::{self, FromRequest, Request};
-use crate::outcome::Outcome;
 use crate::http::Status;
+use crate::outcome::Outcome;
+use crate::request::{self, FromRequest, Request};
+use crate::{Ignite, Phase, Rocket, Sentinel};
 
 /// Request guard to retrieve managed state.
 ///
@@ -199,7 +199,10 @@ impl<'r, T: Send + Sync + 'static> FromRequest<'r> for &'r State<T> {
         match State::get(req.rocket()) {
             Some(state) => Outcome::Success(state),
             None => {
-                error_!("Attempted to retrieve unmanaged state `{}`!", type_name::<T>());
+                error_!(
+                    "Attempted to retrieve unmanaged state `{}`!",
+                    type_name::<T>()
+                );
                 Outcome::Failure((Status::InternalServerError, ()))
             }
         }

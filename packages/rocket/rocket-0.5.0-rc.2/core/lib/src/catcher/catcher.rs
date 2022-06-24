@@ -1,10 +1,10 @@
 use std::fmt;
 use std::io::Cursor;
 
-use crate::response::Response;
+use crate::catcher::{BoxFuture, Handler};
+use crate::http::{uri, ContentType, Status};
 use crate::request::Request;
-use crate::http::{Status, ContentType, uri};
-use crate::catcher::{Handler, BoxFuture};
+use crate::response::Response;
 
 use yansi::Paint;
 
@@ -155,7 +155,9 @@ impl Catcher {
     /// 600)`.
     #[inline(always)]
     pub fn new<S, H>(code: S, handler: H) -> Catcher
-        where S: Into<Option<u16>>, H: Handler
+    where
+        S: Into<Option<u16>>,
+        H: Handler,
     {
         let code = code.into();
         if let Some(code) = code {
@@ -203,11 +205,9 @@ impl Catcher {
     /// let catcher = catcher.map_base(|base| format!("/foo ? {}", base));
     /// assert!(catcher.is_err());
     /// ```
-    pub fn map_base<'a, F>(
-        mut self,
-        mapper: F
-    ) -> std::result::Result<Self, uri::Error<'static>>
-        where F: FnOnce(uri::Origin<'a>) -> String
+    pub fn map_base<'a, F>(mut self, mapper: F) -> std::result::Result<Self, uri::Error<'static>>
+    where
+        F: FnOnce(uri::Origin<'a>) -> String,
     {
         self.base = uri::Origin::parse_owned(mapper(self.base))?.into_normalized();
         self.base.clear_query();
@@ -251,7 +251,13 @@ impl From<StaticInfo> for Catcher {
 impl fmt::Display for Catcher {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if let Some(ref n) = self.name {
-            write!(f, "{}{}{} ", Paint::cyan("("), Paint::white(n), Paint::cyan(")"))?;
+            write!(
+                f,
+                "{}{}{} ",
+                Paint::cyan("("),
+                Paint::white(n),
+                Paint::cyan(")")
+            )?;
         }
 
         if self.base.path() != "/" {
@@ -260,7 +266,7 @@ impl fmt::Display for Catcher {
 
         match self.code {
             Some(code) => write!(f, "{}", Paint::blue(code)),
-            None => write!(f, "{}", Paint::blue("default"))
+            None => write!(f, "{}", Paint::blue("default")),
         }
     }
 }
@@ -276,18 +282,28 @@ impl fmt::Debug for Catcher {
 }
 
 macro_rules! html_error_template {
-    ($code:expr, $reason:expr, $description:expr) => (
+    ($code:expr, $reason:expr, $description:expr) => {
         concat!(
-r#"<!DOCTYPE html>
+            r#"<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>"#, $code, " ", $reason, r#"</title>
+    <title>"#,
+            $code,
+            " ",
+            $reason,
+            r#"</title>
 </head>
 <body align="center">
     <div role="main" align="center">
-        <h1>"#, $code, ": ", $reason, r#"</h1>
-        <p>"#, $description, r#"</p>
+        <h1>"#,
+            $code,
+            ": ",
+            $reason,
+            r#"</h1>
+        <p>"#,
+            $description,
+            r#"</p>
         <hr />
     </div>
     <div role="contentinfo" align="center">
@@ -296,36 +312,48 @@ r#"<!DOCTYPE html>
 </body>
 </html>"#
         )
-    )
+    };
 }
 
 macro_rules! json_error_template {
-    ($code:expr, $reason:expr, $description:expr) => (
+    ($code:expr, $reason:expr, $description:expr) => {
         concat!(
-r#"{
+            r#"{
   "error": {
-    "code": "#, $code, r#",
-    "reason": ""#, $reason, r#"",
-    "description": ""#, $description, r#""
+    "code": "#,
+            $code,
+            r#",
+    "reason": ""#,
+            $reason,
+            r#"",
+    "description": ""#,
+            $description,
+            r#""
   }
 }"#
         )
-    )
+    };
 }
 
 // This is unfortunate, but the `{`, `}` above make it unusable for `format!`.
 macro_rules! json_error_fmt_template {
-    ($code:expr, $reason:expr, $description:expr) => (
+    ($code:expr, $reason:expr, $description:expr) => {
         concat!(
-r#"{{
+            r#"{{
   "error": {{
-    "code": "#, $code, r#",
-    "reason": ""#, $reason, r#"",
-    "description": ""#, $description, r#""
+    "code": "#,
+            $code,
+            r#",
+    "reason": ""#,
+            $reason,
+            r#"",
+    "description": ""#,
+            $description,
+            r#""
   }}
 }}"#
         )
-    )
+    };
 }
 
 macro_rules! default_handler_fn {

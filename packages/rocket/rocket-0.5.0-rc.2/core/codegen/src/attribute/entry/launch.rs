@@ -1,8 +1,8 @@
 use super::EntryAttr;
 
-use devise::{Spanned, Result};
 use devise::ext::SpanDiagnosticExt;
-use proc_macro2::{TokenStream, Span};
+use devise::{Result, Spanned};
+use proc_macro2::{Span, TokenStream};
 
 /// `#[rocket::launch]`: generates a `main` function that calls the attributed
 /// function to generate a `Rocket` instance. Then calls `.launch()` on the
@@ -12,6 +12,7 @@ pub struct Launch;
 impl EntryAttr for Launch {
     const REQUIRES_ASYNC: bool = false;
 
+    // todo x:
     fn function(f: &mut syn::ItemFn) -> Result<TokenStream> {
         if f.sig.ident == "main" {
             return Err(Span::call_site()
@@ -30,9 +31,11 @@ impl EntryAttr for Launch {
 
         let ty = match &f.sig.output {
             syn::ReturnType::Type(_, ty) => ty,
-            _ => return Err(Span::call_site()
-                .error("attribute can only be applied to functions that return a value")
-                .span_note(f.sig.span(), "this function must return a value"))
+            _ => {
+                return Err(Span::call_site()
+                    .error("attribute can only be applied to functions that return a value")
+                    .span_note(f.sig.span(), "this function must return a value"))
+            }
         };
 
         let block = &f.block;
@@ -47,6 +50,7 @@ impl EntryAttr for Launch {
         sig.output = syn::ReturnType::Default;
         sig.asyncness = None;
 
+        // todo x: rocket::async_main()
         Ok(quote_spanned!(block.span() =>
             #[allow(dead_code)] #f
 

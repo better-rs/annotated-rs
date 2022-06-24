@@ -1,12 +1,12 @@
 use std::borrow::{Borrow, Cow};
-use std::convert::AsRef;
 use std::cmp::Ordering;
-use std::str::Utf8Error;
+use std::convert::AsRef;
 use std::fmt;
+use std::str::Utf8Error;
 
+use crate::uri::fmt::{percent_encode, percent_encode_bytes, DEFAULT_ENCODE_SET};
 use ref_cast::RefCast;
-use stable_pattern::{Pattern, Searcher, ReverseSearcher, Split, SplitInternal};
-use crate::uri::fmt::{DEFAULT_ENCODE_SET, percent_encode, percent_encode_bytes};
+use stable_pattern::{Pattern, ReverseSearcher, Searcher, Split, SplitInternal};
 
 use crate::uncased::UncasedStr;
 
@@ -225,12 +225,14 @@ impl RawStr {
                 allocated = string.into();
             }
 
-            unsafe { allocated.as_bytes_mut()[i] = b' '; }
+            unsafe {
+                allocated.as_bytes_mut()[i] = b' ';
+            }
         }
 
         match allocated.is_empty() {
             true => Cow::Borrowed(string),
-            false => Cow::Owned(allocated)
+            false => Cow::Owned(allocated),
         }
     }
 
@@ -304,7 +306,7 @@ impl RawStr {
         let string = self._replace_plus();
         match percent_encoding::percent_decode(string.as_bytes()).decode_utf8()? {
             Cow::Owned(s) => Ok(Cow::Owned(s)),
-            Cow::Borrowed(_) => Ok(string)
+            Cow::Borrowed(_) => Ok(string),
         }
     }
 
@@ -343,7 +345,7 @@ impl RawStr {
         let string = self._replace_plus();
         match percent_encoding::percent_decode(string.as_bytes()).decode_utf8_lossy() {
             Cow::Owned(s) => Cow::Owned(s),
-            Cow::Borrowed(_) => string
+            Cow::Borrowed(_) => string,
         }
     }
 
@@ -412,13 +414,13 @@ impl RawStr {
                         b'/' => allocated.extend_from_slice(b"&#x2F;"),
                         // Old versions of IE treat a ` as a '.
                         b'`' => allocated.extend_from_slice(b"&#96;"),
-                        _ => unreachable!()
+                        _ => unreachable!(),
                     }
 
                     escaped = true;
                 }
                 _ if escaped => allocated.push(*c),
-                _ => {  }
+                _ => {}
             }
         }
 
@@ -653,11 +655,12 @@ impl RawStr {
     /// assert!(!bananas.ends_with("nana"));
     /// ```
     pub fn ends_with<'a, P>(&'a self, pat: P) -> bool
-        where P: Pattern<'a>, <P as Pattern<'a>>::Searcher: ReverseSearcher<'a>
+    where
+        P: Pattern<'a>,
+        <P as Pattern<'a>>::Searcher: ReverseSearcher<'a>,
     {
         pat.is_suffix_of(self.as_str())
     }
-
 
     /// Returns the byte index of the first character of this string slice that
     /// matches the pattern.
@@ -683,7 +686,9 @@ impl RawStr {
     /// ```
     #[inline]
     pub fn find<'a, P: Pattern<'a>>(&'a self, pat: P) -> Option<usize> {
-        pat.into_searcher(self.as_str()).next_match().map(|(i, _)| i)
+        pat.into_searcher(self.as_str())
+            .next_match()
+            .map(|(i, _)| i)
     }
 
     /// An iterator over substrings of this string slice, separated by
@@ -711,7 +716,8 @@ impl RawStr {
     /// ```
     #[inline]
     pub fn split<'a, P>(&'a self, pat: P) -> impl Iterator<Item = &'a RawStr>
-        where P: Pattern<'a>
+    where
+        P: Pattern<'a>,
     {
         let split: Split<'_, P> = Split(SplitInternal {
             start: 0,
@@ -779,7 +785,7 @@ impl RawStr {
                 let end = s.get_unchecked((i + 1)..self.len());
                 (start.into(), end.into())
             },
-            None => (self, &self[0..0])
+            None => (self, &self[0..0]),
         }
     }
 
@@ -832,7 +838,9 @@ impl RawStr {
     /// ```
     #[inline]
     pub fn strip_suffix<'a, P>(&'a self, suffix: P) -> Option<&'a RawStr>
-        where P: Pattern<'a>,<P as Pattern<'a>>::Searcher: ReverseSearcher<'a>,
+    where
+        P: Pattern<'a>,
+        <P as Pattern<'a>>::Searcher: ReverseSearcher<'a>,
     {
         suffix.strip_suffix_of(self.as_str()).map(RawStr::new)
     }
@@ -870,13 +878,14 @@ impl RawStr {
 
 #[cfg(feature = "serde")]
 mod serde {
-    use serde_::{ser, de, Serialize, Deserialize};
+    use serde_::{de, ser, Deserialize, Serialize};
 
     use super::*;
 
     impl Serialize for RawStr {
         fn serialize<S>(&self, ser: S) -> Result<S::Ok, S::Error>
-            where S: ser::Serializer
+        where
+            S: ser::Serializer,
         {
             self.as_str().serialize(ser)
         }
@@ -884,12 +893,12 @@ mod serde {
 
     impl<'de: 'a, 'a> Deserialize<'de> for &'a RawStr {
         fn deserialize<D>(de: D) -> Result<Self, D::Error>
-            where D: de::Deserializer<'de>
+        where
+            D: de::Deserializer<'de>,
         {
             <&'a str as Deserialize<'de>>::deserialize(de).map(RawStr::new)
         }
     }
-
 }
 
 impl fmt::Debug for RawStr {
@@ -919,7 +928,7 @@ impl From<RawStrBuf> for Cow<'_, RawStr> {
 }
 
 macro_rules! impl_partial {
-    ($A:ty : $B:ty as $T:ty) => (
+    ($A:ty : $B:ty as $T:ty) => {
         impl PartialEq<$A> for $B {
             #[inline(always)]
             fn eq(&self, other: &$A) -> bool {
@@ -937,38 +946,40 @@ macro_rules! impl_partial {
                 left.partial_cmp(right)
             }
         }
-    );
-    ($A:ty : $B:ty) => (impl_partial!($A : $B as &str);)
+    };
+    ($A:ty : $B:ty) => {
+        impl_partial!($A: $B as &str);
+    };
 }
 
-impl_partial!(RawStr : &RawStr);
-impl_partial!(&RawStr : RawStr);
+impl_partial!(RawStr: &RawStr);
+impl_partial!(&RawStr: RawStr);
 
-impl_partial!(str : RawStr);
-impl_partial!(str : &RawStr);
-impl_partial!(&str : RawStr);
-impl_partial!(&&str : RawStr);
+impl_partial!(str: RawStr);
+impl_partial!(str: &RawStr);
+impl_partial!(&str: RawStr);
+impl_partial!(&&str: RawStr);
 
 impl_partial!(Cow<'_, str> : RawStr);
 impl_partial!(Cow<'_, str> : &RawStr);
-impl_partial!(RawStr : Cow<'_, str>);
-impl_partial!(&RawStr : Cow<'_, str>);
+impl_partial!(RawStr: Cow<'_, str>);
+impl_partial!(&RawStr: Cow<'_, str>);
 
 impl_partial!(Cow<'_, RawStr> : RawStr as &RawStr);
 impl_partial!(Cow<'_, RawStr> : &RawStr as &RawStr);
-impl_partial!(RawStr : Cow<'_, RawStr> as &RawStr);
-impl_partial!(&RawStr : Cow<'_, RawStr> as &RawStr);
+impl_partial!(RawStr: Cow<'_, RawStr> as &RawStr);
+impl_partial!(&RawStr: Cow<'_, RawStr> as &RawStr);
 
-impl_partial!(String : RawStr);
-impl_partial!(String : &RawStr);
+impl_partial!(String: RawStr);
+impl_partial!(String: &RawStr);
 
-impl_partial!(RawStr : String);
-impl_partial!(&RawStr : String);
+impl_partial!(RawStr: String);
+impl_partial!(&RawStr: String);
 
-impl_partial!(RawStr : str);
-impl_partial!(RawStr : &str);
-impl_partial!(RawStr : &&str);
-impl_partial!(&RawStr : str);
+impl_partial!(RawStr: str);
+impl_partial!(RawStr: &str);
+impl_partial!(RawStr: &&str);
+impl_partial!(&RawStr: str);
 
 impl AsRef<str> for RawStr {
     #[inline(always)]
@@ -998,7 +1009,7 @@ impl AsRef<[u8]> for RawStr {
     }
 }
 
-impl<I: core::slice::SliceIndex<str, Output=str>> core::ops::Index<I> for RawStr {
+impl<I: core::slice::SliceIndex<str, Output = str>> core::ops::Index<I> for RawStr {
     type Output = RawStr;
 
     #[inline]

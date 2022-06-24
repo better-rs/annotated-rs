@@ -1,8 +1,9 @@
-#[macro_use] extern crate rocket;
+#[macro_use]
+extern crate rocket;
 
-use rocket::{Request, Data};
-use rocket::request::{self, FromRequest};
 use rocket::outcome::IntoOutcome;
+use rocket::request::{self, FromRequest};
+use rocket::{Data, Request};
 
 struct HasContentType;
 
@@ -44,9 +45,9 @@ fn data_no_ct() -> &'static str {
 mod local_request_content_type_tests {
     use super::*;
 
-    use rocket::{Rocket, Build};
-    use rocket::local::blocking::Client;
     use rocket::http::ContentType;
+    use rocket::local::blocking::Client;
+    use rocket::{Build, Rocket};
 
     fn rocket() -> Rocket<Build> {
         rocket::build().mount("/", routes![rg_ct, data_has_ct, data_no_ct])
@@ -57,14 +58,29 @@ mod local_request_content_type_tests {
         let client = Client::debug(rocket()).unwrap();
 
         let req = client.post("/");
-        assert_eq!(req.clone().dispatch().into_string(), Some("Absent".to_string()));
-        assert_eq!(req.clone().dispatch().into_string(), Some("Absent".to_string()));
+        assert_eq!(
+            req.clone().dispatch().into_string(),
+            Some("Absent".to_string())
+        );
+        assert_eq!(
+            req.clone().dispatch().into_string(),
+            Some("Absent".to_string())
+        );
         assert_eq!(req.dispatch().into_string(), Some("Absent".to_string()));
 
         let req = client.post("/data");
-        assert_eq!(req.clone().dispatch().into_string(), Some("Data Absent".to_string()));
-        assert_eq!(req.clone().dispatch().into_string(), Some("Data Absent".to_string()));
-        assert_eq!(req.dispatch().into_string(), Some("Data Absent".to_string()));
+        assert_eq!(
+            req.clone().dispatch().into_string(),
+            Some("Data Absent".to_string())
+        );
+        assert_eq!(
+            req.clone().dispatch().into_string(),
+            Some("Data Absent".to_string())
+        );
+        assert_eq!(
+            req.dispatch().into_string(),
+            Some("Data Absent".to_string())
+        );
     }
 
     #[test]
@@ -72,13 +88,28 @@ mod local_request_content_type_tests {
         let client = Client::debug(rocket()).unwrap();
 
         let req = client.post("/").header(ContentType::JSON);
-        assert_eq!(req.clone().dispatch().into_string(), Some("Present".to_string()));
-        assert_eq!(req.clone().dispatch().into_string(), Some("Present".to_string()));
+        assert_eq!(
+            req.clone().dispatch().into_string(),
+            Some("Present".to_string())
+        );
+        assert_eq!(
+            req.clone().dispatch().into_string(),
+            Some("Present".to_string())
+        );
         assert_eq!(req.dispatch().into_string(), Some("Present".to_string()));
 
         let req = client.post("/data").header(ContentType::JSON);
-        assert_eq!(req.clone().dispatch().into_string(), Some("Data Present".to_string()));
-        assert_eq!(req.clone().dispatch().into_string(), Some("Data Present".to_string()));
-        assert_eq!(req.dispatch().into_string(), Some("Data Present".to_string()));
+        assert_eq!(
+            req.clone().dispatch().into_string(),
+            Some("Data Present".to_string())
+        );
+        assert_eq!(
+            req.clone().dispatch().into_string(),
+            Some("Data Present".to_string())
+        );
+        assert_eq!(
+            req.dispatch().into_string(),
+            Some("Data Present".to_string())
+        );
     }
 }

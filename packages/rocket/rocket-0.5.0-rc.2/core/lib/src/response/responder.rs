@@ -2,9 +2,9 @@ use std::fs::File;
 use std::io::Cursor;
 use std::sync::Arc;
 
-use crate::http::{Status, ContentType, StatusClass};
-use crate::response::{self, Response};
+use crate::http::{ContentType, Status, StatusClass};
 use crate::request::Request;
+use crate::response::{self, Response};
 
 /// Trait implemented by types that generate responses for clients.
 ///
@@ -323,7 +323,10 @@ impl<'r> Responder<'r, 'static> for String {
 #[repr(transparent)]
 struct DerefRef<T>(T);
 
-impl<T: std::ops::Deref> AsRef<[u8]> for DerefRef<T> where T::Target: AsRef<[u8]> {
+impl<T: std::ops::Deref> AsRef<[u8]> for DerefRef<T>
+where
+    T::Target: AsRef<[u8]>,
+{
     fn as_ref(&self) -> &[u8] {
         self.0.deref().as_ref()
     }
@@ -418,7 +421,9 @@ impl<'r> Responder<'r, 'static> for () {
 
 /// Responds with the inner `Responder` in `Cow`.
 impl<'r, 'o: 'r, R: ?Sized + ToOwned> Responder<'r, 'o> for std::borrow::Cow<'o, R>
-    where &'o R: Responder<'r, 'o> + 'o, <R as ToOwned>::Owned: Responder<'r, 'o> + 'r
+where
+    &'o R: Responder<'r, 'o> + 'o,
+    <R as ToOwned>::Owned: Responder<'r, 'o> + 'r,
 {
     fn respond_to(self, req: &'r Request<'_>) -> response::Result<'o> {
         match self {
@@ -437,7 +442,7 @@ impl<'r, 'o: 'r, R: Responder<'r, 'o>> Responder<'r, 'o> for Option<R> {
             None => {
                 warn_!("Response was `None`.");
                 Err(Status::NotFound)
-            },
+            }
         }
     }
 }
@@ -445,7 +450,9 @@ impl<'r, 'o: 'r, R: Responder<'r, 'o>> Responder<'r, 'o> for Option<R> {
 /// Responds with the wrapped `Responder` in `self`, whether it is `Ok` or
 /// `Err`.
 impl<'r, 'o: 'r, 't: 'o, 'e: 'o, T, E> Responder<'r, 'o> for Result<T, E>
-    where T: Responder<'r, 't>, E: Responder<'r, 'e>
+where
+    T: Responder<'r, 't>,
+    E: Responder<'r, 'e>,
 {
     fn respond_to(self, req: &'r Request<'_>) -> response::Result<'o> {
         match self {
@@ -458,7 +465,9 @@ impl<'r, 'o: 'r, 't: 'o, 'e: 'o, T, E> Responder<'r, 'o> for Result<T, E>
 /// Responds with the wrapped `Responder` in `self`, whether it is `Left` or
 /// `Right`.
 impl<'r, 'o: 'r, 't: 'o, 'e: 'o, T, E> Responder<'r, 'o> for crate::Either<T, E>
-    where T: Responder<'r, 't>, E: Responder<'r, 'e>
+where
+    T: Responder<'r, 't>,
+    E: Responder<'r, 'e>,
 {
     fn respond_to(self, req: &'r Request<'_>) -> response::Result<'o> {
         match self {
@@ -486,12 +495,8 @@ impl<'r> Responder<'r, 'static> for Status {
     fn respond_to(self, _: &'r Request<'_>) -> response::Result<'static> {
         match self.class() {
             StatusClass::ClientError | StatusClass::ServerError => Err(self),
-            StatusClass::Success if self.code < 206 => {
-                Response::build().status(self).ok()
-            }
-            StatusClass::Informational if self.code == 100 => {
-                Response::build().status(self).ok()
-            }
+            StatusClass::Success if self.code < 206 => Response::build().status(self).ok(),
+            StatusClass::Informational if self.code == 100 => Response::build().status(self).ok(),
             _ => {
                 error_!("Invalid status used as responder: {}.", self);
                 Err(Status::InternalServerError)

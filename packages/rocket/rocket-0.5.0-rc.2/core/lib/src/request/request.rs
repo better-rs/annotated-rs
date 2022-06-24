@@ -1,23 +1,23 @@
 use std::fmt;
-use std::ops::RangeFrom;
-use std::{future::Future, borrow::Cow, sync::Arc};
 use std::net::{IpAddr, SocketAddr};
+use std::ops::RangeFrom;
+use std::{borrow::Cow, future::Future, sync::Arc};
 
-use yansi::Paint;
-use state::{Container, Storage};
-use futures::future::BoxFuture;
 use atomic::{Atomic, Ordering};
+use futures::future::BoxFuture;
+use state::{Container, Storage};
+use yansi::Paint;
 
-use crate::{Rocket, Route, Orbit};
-use crate::request::{FromParam, FromSegments, FromRequest, Outcome};
-use crate::form::{self, ValueField, FromForm};
 use crate::data::Limits;
+use crate::form::{self, FromForm, ValueField};
+use crate::request::{FromParam, FromRequest, FromSegments, Outcome};
+use crate::{Orbit, Rocket, Route};
 
-use crate::http::{hyper, Method, Header, HeaderMap};
-use crate::http::{ContentType, Accept, MediaType, CookieJar, Cookie};
-use crate::http::uncased::UncasedStr;
 use crate::http::private::Certificates;
-use crate::http::uri::{fmt::Path, Origin, Segments, Host, Authority};
+use crate::http::uncased::UncasedStr;
+use crate::http::uri::{fmt::Path, Authority, Host, Origin, Segments};
+use crate::http::{hyper, Header, HeaderMap, Method};
+use crate::http::{Accept, ContentType, Cookie, CookieJar, MediaType};
 
 /// The type of an incoming web request.
 ///
@@ -84,7 +84,7 @@ impl<'r> Request<'r> {
     pub(crate) fn new<'s: 'r>(
         rocket: &'r Rocket<Orbit>,
         method: Method,
-        uri: Origin<'s>
+        uri: Origin<'s>,
     ) -> Request<'r> {
         Request {
             uri,
@@ -102,7 +102,7 @@ impl<'r> Request<'r> {
                 content_type: Storage::new(),
                 cache: Arc::new(<Container![Send + Sync]>::new()),
                 host: None,
-            }
+            },
         }
     }
 
@@ -373,13 +373,11 @@ impl<'r> Request<'r> {
     /// assert_eq!(req.real_ip(), Some(Ipv4Addr::LOCALHOST.into()));
     /// ```
     pub fn real_ip(&self) -> Option<IpAddr> {
-        self.headers()
-            .get_one("X-Real-IP")
-            .and_then(|ip| {
-                ip.parse()
-                    .map_err(|_| warn_!("'X-Real-IP' header is malformed: {}", ip))
-                    .ok()
-            })
+        self.headers().get_one("X-Real-IP").and_then(|ip| {
+            ip.parse()
+                .map_err(|_| warn_!("'X-Real-IP' header is malformed: {}", ip))
+                .ok()
+        })
     }
 
     /// Attempts to return the client's IP address by first inspecting the
@@ -530,9 +528,14 @@ impl<'r> Request<'r> {
     /// ```
     #[inline]
     pub fn content_type(&self) -> Option<&ContentType> {
-        self.state.content_type.get_or_set(|| {
-            self.headers().get_one("Content-Type").and_then(|v| v.parse().ok())
-        }).as_ref()
+        self.state
+            .content_type
+            .get_or_set(|| {
+                self.headers()
+                    .get_one("Content-Type")
+                    .and_then(|v| v.parse().ok())
+            })
+            .as_ref()
     }
 
     /// Returns the Accept header of `self`. If the header is not present,
@@ -550,9 +553,14 @@ impl<'r> Request<'r> {
     /// ```
     #[inline]
     pub fn accept(&self) -> Option<&Accept> {
-        self.state.accept.get_or_set(|| {
-            self.headers().get_one("Accept").and_then(|v| v.parse().ok())
-        }).as_ref()
+        self.state
+            .accept
+            .get_or_set(|| {
+                self.headers()
+                    .get_one("Accept")
+                    .and_then(|v| v.parse().ok())
+            })
+            .as_ref()
     }
 
     /// Returns the media type "format" of the request.
@@ -690,7 +698,10 @@ impl<'r> Request<'r> {
     /// ```
     #[inline(always)]
     pub fn guard<'z, 'a, T>(&'a self) -> BoxFuture<'z, Outcome<T, T::Error>>
-        where T: FromRequest<'a> + 'z, 'a: 'z, 'r: 'z
+    where
+        T: FromRequest<'a> + 'z,
+        'a: 'z,
+        'r: 'z,
     {
         T::from_request(self)
     }
@@ -722,14 +733,14 @@ impl<'r> Request<'r> {
     /// ```
     #[inline]
     pub fn local_cache<T, F>(&self, f: F) -> &T
-        where F: FnOnce() -> T,
-              T: Send + Sync + 'static
+    where
+        F: FnOnce() -> T,
+        T: Send + Sync + 'static,
     {
-        self.state.cache.try_get()
-            .unwrap_or_else(|| {
-                self.state.cache.set(f());
-                self.state.cache.get()
-            })
+        self.state.cache.try_get().unwrap_or_else(|| {
+            self.state.cache.set(f());
+            self.state.cache.get()
+        })
     }
 
     /// Retrieves the cached value for type `T` from the request-local cached
@@ -756,8 +767,9 @@ impl<'r> Request<'r> {
     /// ```
     #[inline]
     pub async fn local_cache_async<'a, T, F>(&'a self, fut: F) -> &'a T
-        where F: Future<Output = T>,
-              T: Send + Sync + 'static
+    where
+        F: Future<Output = T>,
+        T: Send + Sync + 'static,
     {
         match self.state.cache.try_get() {
             Some(s) => s,
@@ -798,7 +810,8 @@ impl<'r> Request<'r> {
     /// ```
     #[inline]
     pub fn param<'a, T>(&'a self, n: usize) -> Option<Result<T, T::Error>>
-        where T: FromParam<'a>
+    where
+        T: FromParam<'a>,
     {
         self.routed_segment(n).map(T::from_param)
     }
@@ -836,7 +849,8 @@ impl<'r> Request<'r> {
     /// ```
     #[inline]
     pub fn segments<'a, T>(&'a self, n: RangeFrom<usize>) -> Result<T, T::Error>
-        where T: FromSegments<'a>
+    where
+        T: FromSegments<'a>,
     {
         T::from_segments(self.routed_segments(n))
     }
@@ -885,7 +899,8 @@ impl<'r> Request<'r> {
     /// ```
     #[inline]
     pub fn query_value<'a, T>(&'a self, name: &str) -> Option<form::Result<'a, T>>
-        where T: FromForm<'a>
+    where
+        T: FromForm<'a>,
     {
         if self.query_fields().find(|f| f.name == name).is_none() {
             return None;
@@ -929,7 +944,8 @@ impl<'r> Request<'r> {
     /// point for the currently matched route, if they exist. Used by codegen.
     #[inline]
     pub fn routed_segments(&self, n: RangeFrom<usize>) -> Segments<'_, Path> {
-        let mount_segments = self.route()
+        let mount_segments = self
+            .route()
             .map(|r| r.uri.metadata.base_segs.len())
             .unwrap_or(0);
 
@@ -939,7 +955,8 @@ impl<'r> Request<'r> {
     // Retrieves the pre-parsed query items. Used by matching and codegen.
     #[inline]
     pub fn query_fields(&self) -> impl Iterator<Item = ValueField<'_>> {
-        self.uri().query()
+        self.uri()
+            .query()
             .map(|q| q.segments().map(ValueField::from))
             .into_iter()
             .flatten()
@@ -970,11 +987,13 @@ impl<'r> Request<'r> {
         connection: Option<ConnectionMeta>,
     ) -> Result<Request<'r>, Error<'r>> {
         // Ensure that the method is known. TODO: Allow made-up methods?
-        let method = Method::from_hyp(&hyper.method)
-            .ok_or(Error::BadMethod(&hyper.method))?;
+        let method = Method::from_hyp(&hyper.method).ok_or(Error::BadMethod(&hyper.method))?;
 
         // TODO: Keep around not just the path/query, but the rest, if there?
-        let uri = hyper.uri.path_and_query().ok_or(Error::InvalidUri(&hyper.uri))?;
+        let uri = hyper
+            .uri
+            .path_and_query()
+            .ok_or(Error::InvalidUri(&hyper.uri))?;
 
         // In debug, make sure we agree with Hyper that the URI is valid. If we
         // disagree, print a warning but continue anyway seeing as if this is a
@@ -997,16 +1016,22 @@ impl<'r> Request<'r> {
         // Determine the host. On HTTP < 2, use the `HOST` header. Otherwise,
         // use the `:authority` pseudo-header which hyper makes part of the URI.
         request.state.host = if hyper.version < hyper::Version::HTTP_2 {
-            hyper.headers.get("host").and_then(|h| Host::parse_bytes(h.as_bytes()).ok())
+            hyper
+                .headers
+                .get("host")
+                .and_then(|h| Host::parse_bytes(h.as_bytes()).ok())
         } else {
-            hyper.uri.host().map(|h| Host::new(Authority::new(None, h, hyper.uri.port_u16())))
+            hyper
+                .uri
+                .host()
+                .map(|h| Host::new(Authority::new(None, h, hyper.uri.port_u16())))
         };
 
         // Set the request cookies, if they exist.
         for header in hyper.headers.get_all("Cookie") {
             let raw_str = match std::str::from_utf8(header.as_bytes()) {
                 Ok(string) => string,
-                Err(_) => continue
+                Err(_) => continue,
             };
 
             for cookie_str in raw_str.split(';').map(|s| s.trim()) {
@@ -1076,15 +1101,23 @@ impl fmt::Display for Request<'_> {
     /// Pretty prints a Request. This is primarily used by Rocket's logging
     /// infrastructure.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{} {}", Paint::green(self.method()), Paint::blue(&self.uri))?;
+        write!(
+            f,
+            "{} {}",
+            Paint::green(self.method()),
+            Paint::blue(&self.uri)
+        )?;
 
         // Print the requests media type when the route specifies a format.
         if let Some(media_type) = self.format() {
             if !media_type.is_any() {
-                write!(f, " {}{}{}",
+                write!(
+                    f,
+                    " {}{}{}",
                     Paint::yellow(media_type.top()),
                     Paint::yellow("/"),
-                    Paint::yellow(media_type.sub()))?;
+                    Paint::yellow(media_type.sub())
+                )?;
             }
         }
 

@@ -12,16 +12,18 @@ fn return_private_cookie(cookies: &CookieJar<'_>) -> Option<String> {
 
 mod tests {
     use super::*;
-    use rocket::routes;
-    use rocket::local::blocking::Client;
     use rocket::http::{Cookie, Status};
+    use rocket::local::blocking::Client;
+    use rocket::routes;
 
     #[test]
     fn private_cookie_is_returned() {
         let rocket = rocket::build().mount("/", routes![return_private_cookie]);
 
         let client = Client::debug(rocket).unwrap();
-        let req = client.get("/").private_cookie(Cookie::new("cookie_name", "cookie_value"));
+        let req = client
+            .get("/")
+            .private_cookie(Cookie::new("cookie_name", "cookie_value"));
         let response = req.dispatch();
 
         assert_eq!(response.headers().get_one("Set-Cookie"), None);
@@ -33,7 +35,9 @@ mod tests {
         let rocket = rocket::build().mount("/", routes![return_private_cookie]);
 
         let client = Client::debug(rocket).unwrap();
-        let req = client.get("/").cookie(Cookie::new("cookie_name", "cookie_value"));
+        let req = client
+            .get("/")
+            .cookie(Cookie::new("cookie_name", "cookie_value"));
         let response = req.dispatch();
 
         assert_eq!(response.status(), Status::NotFound);

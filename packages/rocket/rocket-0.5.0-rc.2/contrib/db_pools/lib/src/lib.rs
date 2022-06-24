@@ -212,27 +212,30 @@
 #![doc(html_root_url = "https://api.rocket.rs/master/rocket_db_pools")]
 #![doc(html_favicon_url = "https://rocket.rs/images/favicon.ico")]
 #![doc(html_logo_url = "https://rocket.rs/images/logo-boxed.png")]
-
 #![deny(missing_docs)]
 
 /// Re-export of the `figment` crate.
 #[doc(inline)]
 pub use rocket::figment;
 
+#[cfg(feature = "deadpool_postgres")]
+pub use deadpool_postgres;
+#[cfg(feature = "deadpool_redis")]
+pub use deadpool_redis;
+#[cfg(feature = "mongodb")]
+pub use mongodb;
 pub use rocket;
-#[cfg(feature = "deadpool_postgres")] pub use deadpool_postgres;
-#[cfg(feature = "deadpool_redis")] pub use deadpool_redis;
-#[cfg(feature = "mongodb")] pub use mongodb;
-#[cfg(feature = "sqlx")] pub use sqlx;
+#[cfg(feature = "sqlx")]
+pub use sqlx;
 
+mod config;
 mod database;
 mod error;
 mod pool;
-mod config;
 
+pub use self::config::Config;
 pub use self::database::{Connection, Database, Initializer};
 pub use self::error::Error;
 pub use self::pool::Pool;
-pub use self::config::Config;
 
 pub use rocket_db_pools_codegen::*;

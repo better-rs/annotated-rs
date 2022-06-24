@@ -1,6 +1,6 @@
-use rocket::{Request, Rocket, Ignite, Sentinel};
 use rocket::http::Status;
 use rocket::request::{self, FromRequest};
+use rocket::{Ignite, Request, Rocket, Sentinel};
 
 use crate::context::ContextManager;
 
@@ -102,7 +102,9 @@ impl<'r> FromRequest<'r> for Metadata<'r> {
     type Error = ();
 
     async fn from_request(request: &'r Request<'_>) -> request::Outcome<Self, ()> {
-        request.rocket().state::<ContextManager>()
+        request
+            .rocket()
+            .state::<ContextManager>()
             .map(|cm| request::Outcome::Success(Metadata(cm)))
             .unwrap_or_else(|| {
                 error_!("Uninitialized template context: missing fairing.");

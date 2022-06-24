@@ -1,12 +1,12 @@
-use state::Container;
 use figment::Figment;
+use state::Container;
 
-use crate::{Catcher, Config, Rocket, Route, Shutdown};
-use crate::router::Router;
 use crate::fairing::Fairings;
+use crate::router::Router;
+use crate::{Catcher, Config, Rocket, Route, Shutdown};
 
 mod private {
-    pub trait Sealed {  }
+    pub trait Sealed {}
 }
 
 #[doc(hidden)]
@@ -79,8 +79,17 @@ phases! {
     /// An instance of `Rocket` in this phase is typed as [`Rocket<Build>`]: a
     /// transient, in-progress build.
     Build (#[derive(Default, Debug)] Building) {
+
+        //
+        // todo x: 路由表, 注册列表
+        //
         pub(crate) routes: Vec<Route>,
+
+        //
+        //
+        //
         pub(crate) catchers: Vec<Catcher>,
+
         pub(crate) fairings: Fairings,
         pub(crate) figment: Figment,
         pub(crate) state: Container![Send + Sync],

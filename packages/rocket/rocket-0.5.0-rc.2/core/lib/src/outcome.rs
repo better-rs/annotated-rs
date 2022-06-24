@@ -89,7 +89,7 @@
 
 use std::fmt;
 
-use yansi::{Paint, Color};
+use yansi::{Color, Paint};
 
 use self::Outcome::*;
 
@@ -135,7 +135,7 @@ impl<S, E, F> IntoOutcome<S, E, F> for Option<S> {
     fn into_outcome(self, failure: E) -> Outcome<S, E, F> {
         match self {
             Some(val) => Success(val),
-            None => Failure(failure)
+            None => Failure(failure),
         }
     }
 
@@ -143,7 +143,7 @@ impl<S, E, F> IntoOutcome<S, E, F> for Option<S> {
     fn or_forward(self, forward: F) -> Outcome<S, E, F> {
         match self {
             Some(val) => Success(val),
-            None => Forward(forward)
+            None => Forward(forward),
         }
     }
 }
@@ -169,7 +169,7 @@ impl<S, E, F> Outcome<S, E, F> {
     pub fn unwrap(self) -> S {
         match self {
             Success(val) => val,
-            _ => panic!("unwrapped a non-successful outcome")
+            _ => panic!("unwrapped a non-successful outcome"),
         }
     }
 
@@ -193,7 +193,7 @@ impl<S, E, F> Outcome<S, E, F> {
     pub fn expect(self, message: &str) -> S {
         match self {
             Success(val) => val,
-            _ => panic!("unwrapped a non-successful outcome: {}", message)
+            _ => panic!("unwrapped a non-successful outcome: {}", message),
         }
     }
 
@@ -285,7 +285,7 @@ impl<S, E, F> Outcome<S, E, F> {
     pub fn succeeded(self) -> Option<S> {
         match self {
             Success(val) => Some(val),
-            _ => None
+            _ => None,
         }
     }
 
@@ -311,7 +311,7 @@ impl<S, E, F> Outcome<S, E, F> {
     pub fn failed(self) -> Option<E> {
         match self {
             Failure(val) => Some(val),
-            _ => None
+            _ => None,
         }
     }
 
@@ -337,7 +337,7 @@ impl<S, E, F> Outcome<S, E, F> {
     pub fn forwarded(self) -> Option<F> {
         match self {
             Forward(val) => Some(val),
-            _ => None
+            _ => None,
         }
     }
 
@@ -365,7 +365,7 @@ impl<S, E, F> Outcome<S, E, F> {
     pub fn success_or<T>(self, value: T) -> Result<S, T> {
         match self {
             Success(val) => Ok(val),
-            _ => Err(value)
+            _ => Err(value),
         }
     }
 
@@ -394,7 +394,7 @@ impl<S, E, F> Outcome<S, E, F> {
     pub fn success_or_else<T, V: FnOnce() -> T>(self, f: V) -> Result<S, T> {
         match self {
             Success(val) => Ok(val),
-            _ => Err(f())
+            _ => Err(f()),
         }
     }
 
@@ -616,7 +616,8 @@ impl<S, E, F> Outcome<S, E, F> {
     /// ```
     #[inline]
     pub fn ok_map_forward<M>(self, f: M) -> Result<S, E>
-        where M: FnOnce(F) -> Result<S, E>
+    where
+        M: FnOnce(F) -> Result<S, E>,
     {
         match self {
             Outcome::Success(s) => Ok(s),
@@ -644,7 +645,8 @@ impl<S, E, F> Outcome<S, E, F> {
     /// ```
     #[inline]
     pub fn ok_map_failure<M>(self, f: M) -> Result<S, F>
-        where M: FnOnce(E) -> Result<S, F>
+    where
+        M: FnOnce(E) -> Result<S, F>,
     {
         match self {
             Outcome::Success(s) => Ok(s),

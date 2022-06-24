@@ -1,10 +1,10 @@
-use std::path::{PathBuf, Path};
+use std::path::{Path, PathBuf};
 
-use crate::{Request, Data};
-use crate::http::{Method, uri::Segments, ext::IntoOwned};
-use crate::route::{Route, Handler, Outcome};
-use crate::response::Redirect;
 use crate::fs::NamedFile;
+use crate::http::{ext::IntoOwned, uri::Segments, Method};
+use crate::response::Redirect;
+use crate::route::{Handler, Outcome, Route};
+use crate::{Data, Request};
 
 /// Custom handler for serving static files.
 ///
@@ -148,7 +148,10 @@ impl FileServer {
         if !options.contains(Options::Missing) {
             if !options.contains(Options::IndexFile) && !path.is_dir() {
                 let path = path.display();
-                error!("FileServer path '{}' is not a directory.", Paint::white(path));
+                error!(
+                    "FileServer path '{}' is not a directory.",
+                    Paint::white(path)
+                );
                 warn_!("Aborting early to prevent inevitable handler failure.");
                 panic!("invalid directory: refusing to continue");
             } else if !path.exists() {
@@ -159,7 +162,11 @@ impl FileServer {
             }
         }
 
-        FileServer { root: path.into(), options, rank: Self::DEFAULT_RANK }
+        FileServer {
+            root: path.into(),
+            options,
+            rank: Self::DEFAULT_RANK,
+        }
     }
 
     /// Sets the rank for generated routes to `rank`.
@@ -213,7 +220,9 @@ impl Handler for FileServer {
 
         // Get the segments as a `PathBuf`, allowing dotfiles requested.
         let allow_dotfiles = options.contains(Options::DotFiles);
-        let path = req.segments::<Segments<'_, Path>>(0..).ok()
+        let path = req
+            .segments::<Segments<'_, Path>>(0..)
+            .ok()
             .and_then(|segments| segments.to_path_buf(allow_dotfiles).ok())
             .map(|path| self.root.join(path));
 
@@ -221,7 +230,9 @@ impl Handler for FileServer {
             Some(p) if p.is_dir() => {
                 // Normalize '/a/b/foo' to '/a/b/foo/'.
                 if options.contains(Options::NormalizeDirs) && !req.uri().path().ends_with('/') {
-                    let normal = req.uri().map_path(|p| format!("{}/", p))
+                    let normal = req
+                        .uri()
+                        .map_path(|p| format!("{}/", p))
                         .expect("adding a trailing slash to a known good path => valid path")
                         .into_owned();
 
@@ -234,7 +245,7 @@ impl Handler for FileServer {
 
                 let index = NamedFile::open(p.join("index.html")).await.ok();
                 Outcome::from_or_forward(req, data, index)
-            },
+            }
             Some(p) => Outcome::from_or_forward(req, data, NamedFile::open(p).await.ok()),
             None => Outcome::forward(data),
         }

@@ -1,7 +1,7 @@
+use devise::{ext::SpanDiagnosticExt, Result, Spanned};
 use proc_macro::TokenStream;
-use devise::{Spanned, Result, ext::SpanDiagnosticExt};
 
-use crate::syn::{Fields, Data, Type, LitStr, DeriveInput, Ident, Visibility};
+use crate::syn::{Data, DeriveInput, Fields, Ident, LitStr, Type, Visibility};
 
 #[derive(Debug)]
 struct DatabaseInvocation {
@@ -33,7 +33,7 @@ fn parse_invocation(attr: TokenStream, input: TokenStream) -> Result<DatabaseInv
 
     let structure = match input.data {
         Data::Struct(s) => s,
-        _ => return Err(input.span().error(ONLY_ON_STRUCTS_MSG))
+        _ => return Err(input.span().error(ONLY_ON_STRUCTS_MSG)),
     };
 
     let inner_type = match structure.fields {
@@ -41,7 +41,13 @@ fn parse_invocation(attr: TokenStream, input: TokenStream) -> Result<DatabaseInv
             let first = fields.unnamed.first().expect("checked length");
             first.ty.clone()
         }
-        _ => return Err(structure.fields.span().error(ONLY_UNNAMED_FIELDS).help(EXAMPLE))
+        _ => {
+            return Err(structure
+                .fields
+                .span()
+                .error(ONLY_UNNAMED_FIELDS)
+                .help(EXAMPLE))
+        }
     };
 
     Ok(DatabaseInvocation {
@@ -123,5 +129,6 @@ pub fn database_attr(attr: TokenStream, input: TokenStream) -> Result<TokenStrea
                 <#conn>::abort(__r)
             }
         }
-    }.into())
+    }
+    .into())
 }

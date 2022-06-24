@@ -18,11 +18,11 @@ pub enum StatusClass {
     ServerError,
     /// Indicates that the status code is nonstandard and unknown: all other
     /// status codes.
-    Unknown
+    Unknown,
 }
 
 macro_rules! class_check_fn {
-    ($func:ident, $type:expr, $variant:ident) => (
+    ($func:ident, $type:expr, $variant:ident) => {
         /// Returns `true` if `self` is a `StatusClass` of
         #[doc=$type]
         /// Returns `false` otherwise.
@@ -30,7 +30,7 @@ macro_rules! class_check_fn {
         pub fn $func(&self) -> bool {
             *self == StatusClass::$variant
         }
-    )
+    };
 }
 
 impl StatusClass {
@@ -346,7 +346,7 @@ impl PartialEq for Status {
     }
 }
 
-impl Eq for Status { }
+impl Eq for Status {}
 
 impl PartialOrd for Status {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {

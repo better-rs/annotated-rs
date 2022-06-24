@@ -3,13 +3,13 @@ use std::fmt;
 use serde::{de, ser, Deserialize, Serialize};
 
 use crate::http::private::cookie::Key;
-use crate::request::{Outcome, Request, FromRequest};
+use crate::request::{FromRequest, Outcome, Request};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 enum Kind {
     Zero,
     Generated,
-    Provided
+    Provided,
 }
 
 /// A cryptographically secure secret key.
@@ -78,7 +78,10 @@ pub struct SecretKey {
 impl SecretKey {
     /// Returns a secret key that is all zeroes.
     pub(crate) fn zero() -> SecretKey {
-        SecretKey { key: Key::from(&[0; 64]), provided: false }
+        SecretKey {
+            key: Key::from(&[0; 64]),
+            provided: false,
+        }
     }
 
     /// Creates a `SecretKey` from a 512-bit `master` key. For security,
@@ -97,7 +100,10 @@ impl SecretKey {
     /// let key = SecretKey::from(&master);
     /// ```
     pub fn from(master: &[u8]) -> SecretKey {
-        SecretKey { key: Key::from(master), provided: true }
+        SecretKey {
+            key: Key::from(master),
+            provided: true,
+        }
     }
 
     /// Derives a `SecretKey` from 256 bits of cryptographically random
@@ -116,7 +122,10 @@ impl SecretKey {
     /// let key = SecretKey::derive_from(&material);
     /// ```
     pub fn derive_from(material: &[u8]) -> SecretKey {
-        SecretKey { key: Key::derive_from(material), provided: true }
+        SecretKey {
+            key: Key::derive_from(material),
+            provided: true,
+        }
     }
 
     /// Attempts to generate a `SecretKey` from randomness retrieved from the
@@ -130,7 +139,10 @@ impl SecretKey {
     /// let key = SecretKey::generate();
     /// ```
     pub fn generate() -> Option<SecretKey> {
-        Some(SecretKey { key: Key::try_generate()?, provided: false })
+        Some(SecretKey {
+            key: Key::try_generate()?,
+            provided: false,
+        })
     }
 
     /// Returns `true` if `self` is the `0`-key.
@@ -169,7 +181,8 @@ impl SecretKey {
 
     /// Serialize as `zero` to avoid key leakage.
     pub(crate) fn serialize_zero<S>(&self, ser: S) -> Result<S::Ok, S::Error>
-        where S: ser::Serializer
+    where
+        S: ser::Serializer,
     {
         ser.serialize_bytes(&[0; 32][..])
     }
@@ -193,7 +206,10 @@ impl<'r> FromRequest<'r> for &'r SecretKey {
 
 impl<'de> Deserialize<'de> for SecretKey {
     fn deserialize<D: de::Deserializer<'de>>(de: D) -> Result<Self, D::Error> {
-        use {binascii::{b64decode, hex2bin}, de::Unexpected::Str};
+        use {
+            binascii::{b64decode, hex2bin},
+            de::Unexpected::Str,
+        };
 
         struct Visitor;
 
@@ -212,7 +228,7 @@ impl<'de> Deserialize<'de> for SecretKey {
                 let bytes = match val.len() {
                     44 | 88 => b64decode(val.as_bytes(), &mut buf).map_err(|_| e(val))?,
                     64 => hex2bin(val.as_bytes(), &mut buf).map_err(|_| e(val))?,
-                    n => Err(E::invalid_length(n, &"44 or 88 for base64, 64 for hex"))?
+                    n => Err(E::invalid_length(n, &"44 or 88 for base64, 64 for hex"))?,
                 };
 
                 self.visit_bytes(bytes)
@@ -231,7 +247,8 @@ impl<'de> Deserialize<'de> for SecretKey {
             }
 
             fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
-                where A: de::SeqAccess<'de>
+            where
+                A: de::SeqAccess<'de>,
             {
                 let mut bytes = Vec::with_capacity(seq.size_hint().unwrap_or(0));
                 while let Some(byte) = seq.next_element()? {

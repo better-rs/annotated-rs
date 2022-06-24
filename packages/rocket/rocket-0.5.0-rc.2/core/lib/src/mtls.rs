@@ -9,9 +9,9 @@
 #[doc(inline)]
 pub use crate::http::tls::mtls::*;
 
-use crate::request::{Request, FromRequest, Outcome};
-use crate::outcome::{try_outcome, IntoOutcome};
 use crate::http::Status;
+use crate::outcome::{try_outcome, IntoOutcome};
+use crate::request::{FromRequest, Outcome, Request};
 
 #[crate::async_trait]
 impl<'r> FromRequest<'r> for Certificate<'r> {

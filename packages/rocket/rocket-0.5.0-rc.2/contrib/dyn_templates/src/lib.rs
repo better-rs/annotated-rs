@@ -132,7 +132,8 @@
 #![doc(html_favicon_url = "https://rocket.rs/images/favicon.ico")]
 #![doc(html_logo_url = "https://rocket.rs/images/logo-boxed.png")]
 
-#[macro_use] extern crate rocket;
+#[macro_use]
+extern crate rocket;
 
 #[cfg(not(any(feature = "tera", feature = "handlebars")))]
 compile_error!("at least one of \"tera\" or \"handlebars\" features must be enabled");
@@ -153,16 +154,16 @@ pub use handlebars_ as handlebars;
 #[cfg(feature = "handlebars")]
 mod handlebars_templates;
 
+mod context;
 mod engine;
 mod fairing;
-mod context;
 mod metadata;
 
 pub use self::engine::Engines;
 pub use self::metadata::Metadata;
 
-use self::fairing::TemplateFairing;
 use self::context::{Context, ContextManager};
+use self::fairing::TemplateFairing;
 
 use std::borrow::Cow;
 use std::path::PathBuf;
@@ -170,13 +171,13 @@ use std::path::PathBuf;
 #[doc(hidden)]
 pub use rocket::serde;
 
-use rocket::{Rocket, Orbit, Ignite, Sentinel};
-use rocket::request::Request;
 use rocket::fairing::Fairing;
-use rocket::response::{self, Responder};
+use rocket::figment::{error::Error, value::Value};
 use rocket::http::{ContentType, Status};
-use rocket::figment::{value::Value, error::Error};
+use rocket::request::Request;
+use rocket::response::{self, Responder};
 use rocket::serde::Serialize;
+use rocket::{Ignite, Orbit, Rocket, Sentinel};
 
 const DEFAULT_TEMPLATE_DIR: &str = "templates";
 
@@ -190,7 +191,7 @@ const DEFAULT_TEMPLATE_DIR: &str = "templates";
 #[derive(Debug)]
 pub struct Template {
     name: Cow<'static, str>,
-    value: Result<Value, Error>
+    value: Result<Value, Error>,
 }
 
 #[derive(Debug)]
@@ -200,7 +201,7 @@ pub(crate) struct TemplateInfo {
     /// The extension for the engine of this template.
     engine_ext: &'static str,
     /// The extension before the engine extension in the template, if any.
-    data_type: ContentType
+    data_type: ContentType,
 }
 
 impl Template {
@@ -266,9 +267,13 @@ impl Template {
     /// }
     /// ```
     pub fn custom<F: Send + Sync + 'static>(f: F) -> impl Fairing
-        where F: Fn(&mut Engines)
+    where
+        F: Fn(&mut Engines),
     {
-        Self::try_custom(move |engines| { f(engines); Ok(()) })
+        Self::try_custom(move |engines| {
+            f(engines);
+            Ok(())
+        })
     }
 
     /// Returns a fairing that initializes and maintains templating state.
@@ -298,9 +303,12 @@ impl Template {
     /// }
     /// ```
     pub fn try_custom<F: Send + Sync + 'static>(f: F) -> impl Fairing
-        where F: Fn(&mut Engines) -> Result<(), Box<dyn std::error::Error>>
+    where
+        F: Fn(&mut Engines) -> Result<(), Box<dyn std::error::Error>>,
     {
-        TemplateFairing { callback: Box::new(f) }
+        TemplateFairing {
+            callback: Box::new(f),
+        }
     }
 
     /// Render the template named `name` with the context `context`. The
@@ -334,9 +342,14 @@ impl Template {
     /// ```
     #[inline]
     pub fn render<S, C>(name: S, context: C) -> Template
-        where S: Into<Cow<'static, str>>, C: Serialize
+    where
+        S: Into<Cow<'static, str>>,
+        C: Serialize,
     {
-        Template { name: name.into(), value: Value::serialize(context) }
+        Template {
+            name: name.into(),
+            value: Value::serialize(context),
+        }
     }
 
     /// Render the template named `name` with the context `context` into a
@@ -374,16 +387,24 @@ impl Template {
     /// ```
     #[inline]
     pub fn show<S, C>(rocket: &Rocket<Orbit>, name: S, context: C) -> Option<String>
-        where S: Into<Cow<'static, str>>, C: Serialize
+    where
+        S: Into<Cow<'static, str>>,
+        C: Serialize,
     {
-        let ctxt = rocket.state::<ContextManager>().map(ContextManager::context).or_else(|| {
-            warn!("Uninitialized template context: missing fairing.");
-            info!("To use templates, you must attach `Template::fairing()`.");
-            info!("See the `Template` documentation for more information.");
-            None
-        })?;
+        let ctxt = rocket
+            .state::<ContextManager>()
+            .map(ContextManager::context)
+            .or_else(|| {
+                warn!("Uninitialized template context: missing fairing.");
+                info!("To use templates, you must attach `Template::fairing()`.");
+                info!("See the `Template` documentation for more information.");
+                None
+            })?;
 
-        Template::render(name, context).finalize(&ctxt).ok().map(|v| v.0)
+        Template::render(name, context)
+            .finalize(&ctxt)
+            .ok()
+            .map(|v| v.0)
     }
 
     /// Actually render this template given a template context. This method is
@@ -420,12 +441,16 @@ impl Template {
 impl<'r> Responder<'r, 'static> for Template {
     fn respond_to(self, req: &'r Request<'_>) -> response::Result<'static> {
         let (render, content_type) = {
-            let ctxt = req.rocket().state::<ContextManager>().ok_or_else(|| {
-                error_!("Uninitialized template context: missing fairing.");
-                info_!("To use templates, you must attach `Template::fairing()`.");
-                info_!("See the `Template` documentation for more information.");
-                Status::InternalServerError
-            })?.context();
+            let ctxt = req
+                .rocket()
+                .state::<ContextManager>()
+                .ok_or_else(|| {
+                    error_!("Uninitialized template context: missing fairing.");
+                    info_!("To use templates, you must attach `Template::fairing()`.");
+                    info_!("See the `Template` documentation for more information.");
+                    Status::InternalServerError
+                })?
+                .context();
 
             self.finalize(&ctxt)?
         };
@@ -439,7 +464,10 @@ impl Sentinel for Template {
         if rocket.state::<ContextManager>().is_none() {
             let template = rocket::yansi::Paint::default("Template").bold();
             let fairing = rocket::yansi::Paint::default("Template::fairing()").bold();
-            error!("returning `{}` responder without attaching `{}`.", template, fairing);
+            error!(
+                "returning `{}` responder without attaching `{}`.",
+                template, fairing
+            );
             info_!("To use or query templates, you must attach `{}`.", fairing);
             info_!("See the `Template` documentation for more information.");
             return true;

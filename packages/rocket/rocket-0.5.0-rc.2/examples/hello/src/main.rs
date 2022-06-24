@@ -1,6 +1,10 @@
-#[macro_use] extern crate rocket;
+#![allow(dead_code, unused_imports)] // global ignore useless warnings
 
-#[cfg(test)] mod tests;
+#[macro_use]
+extern crate rocket;
+
+#[cfg(test)]
+mod tests;
 
 #[derive(FromFormField)]
 enum Lang {
@@ -8,7 +12,7 @@ enum Lang {
     English,
     #[field(value = "ru")]
     #[field(value = "ру")]
-    Russian
+    Russian,
 }
 
 #[derive(FromForm)]
@@ -17,6 +21,14 @@ struct Options<'r> {
     name: Option<&'r str>,
 }
 
+/*
+
+TODO X:
+    1. 注意路由定义格式:  #[get()]
+    2. 返回值格式
+
+*/
+//
 // Try visiting:
 //   http://127.0.0.1:8000/hello/world
 #[get("/world")]
@@ -72,9 +84,19 @@ fn hello(lang: Option<Lang>, opt: Options<'_>) -> String {
     greeting
 }
 
+/*
+
+TODO X:
+    1. 启动入口: #[launch] 宏, 自动 hook main 方法.
+
+*/
 #[launch]
 fn rocket() -> _ {
+    //
     rocket::build()
+        //
+        // todo x: 路由注册方式
+        //
         .mount("/", routes![hello])
         .mount("/hello", routes![world, mir])
         .mount("/wave", routes![wave])

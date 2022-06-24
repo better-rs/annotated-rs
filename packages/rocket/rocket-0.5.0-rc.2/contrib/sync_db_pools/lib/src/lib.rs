@@ -370,25 +370,31 @@ pub extern crate rocket;
 ))]
 pub use diesel;
 
-#[cfg(feature = "postgres_pool")] pub use postgres;
-#[cfg(feature = "postgres_pool")] pub use r2d2_postgres;
+#[cfg(feature = "postgres_pool")]
+pub use postgres;
+#[cfg(feature = "postgres_pool")]
+pub use r2d2_postgres;
 
-#[cfg(feature = "sqlite_pool")] pub use rusqlite;
-#[cfg(feature = "sqlite_pool")] pub use r2d2_sqlite;
+#[cfg(feature = "sqlite_pool")]
+pub use r2d2_sqlite;
+#[cfg(feature = "sqlite_pool")]
+pub use rusqlite;
 
-#[cfg(feature = "memcache_pool")] pub use memcache;
-#[cfg(feature = "memcache_pool")] pub use r2d2_memcache;
+#[cfg(feature = "memcache_pool")]
+pub use memcache;
+#[cfg(feature = "memcache_pool")]
+pub use r2d2_memcache;
 
 pub use r2d2;
 
-mod poolable;
 mod config;
-mod error;
 mod connection;
+mod error;
+mod poolable;
 
-pub use self::poolable::{Poolable, PoolResult};
 pub use self::config::Config;
 pub use self::error::Error;
+pub use self::poolable::{PoolResult, Poolable};
 
-pub use rocket_sync_db_pools_codegen::*;
 pub use self::connection::*;
+pub use rocket_sync_db_pools_codegen::*;

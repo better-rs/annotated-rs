@@ -4,11 +4,11 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use state::Storage;
 use yansi::Paint;
 
-use crate::{Rocket, Request, Response, Orbit, Config};
 use crate::fairing::{Fairing, Info, Kind};
-use crate::http::{Header, uncased::UncasedStr};
+use crate::http::{uncased::UncasedStr, Header};
 use crate::log::PaintExt;
 use crate::shield::*;
+use crate::{Config, Orbit, Request, Response, Rocket};
 
 /// A [`Fairing`] that injects browser security and privacy headers into all
 /// outgoing responses.
@@ -90,6 +90,9 @@ impl Default for Shield {
     /// let shield = Shield::default();
     /// ```
     fn default() -> Self {
+        //
+        //
+        //
         Shield::new()
             .enable(NoSniff::default())
             .enable(Frame::default())
@@ -175,9 +178,7 @@ impl Shield {
 
     fn headers(&self) -> &[Header<'static>] {
         self.rendered.get_or_set(|| {
-            let mut headers: Vec<_> = self.policies.values()
-                .map(|p| p.header())
-                .collect();
+            let mut headers: Vec<_> = self.policies.values().map(|p| p.header()).collect();
 
             if self.force_hsts.load(Ordering::Acquire) {
                 headers.push(Policy::header(&Hsts::default()));
@@ -228,7 +229,7 @@ impl Fairing for Shield {
             if response.headers().contains(header.name()) {
                 warn!("Shield: response contains a '{}' header.", header.name());
                 warn_!("Refusing to overwrite existing header.");
-                continue
+                continue;
             }
 
             response.set_header(header.clone());
