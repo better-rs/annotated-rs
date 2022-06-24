@@ -6,6 +6,21 @@
     - IDE 打开这个 cargo.toml 文件, IDE 会提示 attach 到工程.
     - 这样 IDE 就会为 examples 创建项目索引, 就可以正常跳转代码.
 
+## 运行示例:
+
+- 运行 [examples] 示例的方式:
+
+```ruby
+
+# 注意是根目录:
+cd annotated-rs/
+
+# 运行示例:
+task rocket:run:hello 
+
+
+```
+
 ## 阅读方法:
 
 - 从示例入手, 逐步拆解整个 web 框架

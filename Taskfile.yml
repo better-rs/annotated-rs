@@ -3,10 +3,11 @@ version: "3"
 #
 # sub namespace: https://taskfile.dev/#/usage?id=including-other-taskfiles
 #
-#includes:
-#  rs:
-#    taskfile: ./iDev/coding/rs/
-#    dir: ./iDev/coding/rs/
+includes:
+  rocket:
+    taskfile: packages/rocket/rocket-0.5.0-rc.2/examples/Taskfile.yml
+    dir: packages/rocket/rocket-0.5.0-rc.2/examples/
+
 
 #
 # global vars: https://taskfile.dev/#/usage?id=variables
