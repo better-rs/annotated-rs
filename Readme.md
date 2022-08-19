@@ -1,5 +1,19 @@
 # annotated-rs:
 
+
+
+<p align="">
+    <a href="https://discord.com/invite/MnDA9pfWAW" target="_blank">
+      <img src="https://img.shields.io/badge/Discord-GossipCoder-%237289DA.svg?logo=iscord&logoColor=white" alt="Discord">
+    </a> 
+    <a href="https://discord.com/invite/MnDA9pfWAW" target="_blank">
+      <img src="https://img.shields.io/discord/877031318272217179" alt="Discord">
+    </a> 
+    <img src="https://visitor-badge.laobi.icu/badge?page_id=better-dart" alt="10000" />
+</p>
+
+
+
 - rust 知名项目源码分析
 
 ## related:
